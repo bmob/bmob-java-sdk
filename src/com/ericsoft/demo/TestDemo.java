@@ -20,13 +20,14 @@ public class TestDemo {
 //		callFunction();//调用云代码
 //		findPayOrder();//查询支付订单
 //		count();//计数
-		upload();//上传文件
+//		upload();//上传文件
+		requestSms();//发送短信
 	}
 	
 	//使用RestAPI前必须先初始化，KEY可在Bmob应用信息里查询。
 	private static void initBmob(){
 		Bmob.initBmob("Your Bmob-Application-Id",
-		"Your Bmob-REST-API-Key");		
+		"Your Bmob-REST-API-Key");			
 		//用到超级权限需要注册该Key
 //		Bmob.initMaster("Your Bmob-Master-Key");
 	}
@@ -36,6 +37,10 @@ public class TestDemo {
 		System.out.println(res);
 	}
 	
+	private static void requestSms(){
+		String res=Bmob.requestSms("13168391111","您的验证码是：222222, 有效期是10分钟。");
+		System.out.println(res);		
+	}
 	
 	
 	

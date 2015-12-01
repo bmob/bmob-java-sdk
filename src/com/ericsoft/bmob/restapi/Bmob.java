@@ -39,6 +39,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.ericsoft.bmob.bson.BSONObject;
+
 public class Bmob {
 
 	private static boolean IS_INIT = false;
@@ -639,6 +641,38 @@ public class Bmob {
 		}
 		return result;
 	}
+	
+	/**
+	 * 发送短信
+	 * @param mobileNum 电话号码
+	 * @param content 短信内容
+	 * @return JSON格式结果
+	 */
+	public static String requestSms(String mobileNum, String content){
+		String result = STRING_EMPTY;
+		if(isInit()){
+			HttpURLConnection conn = null;
+			String mURL = "https://api.bmob.cn/1/requestSms";
+			try {
+				BSONObject bson = new BSONObject();
+				bson.put("mobilePhoneNumber", mobileNum);
+				bson.put("content", mobileNum);
+			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_POST);
+			    conn.setDoOutput(true);
+			    conn.connect();
+			    printWriter(conn, bson.toString());
+	            result = getResultFromConnection(conn);
+		        conn.disconnect();
+			} catch (FileNotFoundException e){
+			    result = MSG_NOT_FOUND + CHAR_RISK + "(callFunction)" + e.getMessage();
+			} catch (Exception e) {
+			    result = MSG_ERROR + CHAR_RISK + "(callFunction)" + e.getMessage();
+			}
+		}else{
+			result = MSG_UNREGISTERED;
+		}
+		return result;
+	}	
 
 	public static String uploadFile(String file){
 		String result = STRING_EMPTY;

@@ -27,13 +27,14 @@ public class TestDemo {
 	//使用RestAPI前必须先初始化，KEY可在Bmob应用信息里查询。
 	private static void initBmob(){
 		Bmob.initBmob("Your Bmob-Application-Id",
-		"Your Bmob-REST-API-Key");			
+		"Your Bmob-REST-API-Key");		
+			
 		//用到超级权限需要注册该Key
 //		Bmob.initMaster("Your Bmob-Master-Key");
 	}
 	
 	private static void upload(){
-		String res=Bmob.uploadFile("/tmp/myPicture.jpg");
+		String res=Bmob.uploadFile2("/tmp/myPicture.jpg");
 		System.out.println(res);
 	}
 	

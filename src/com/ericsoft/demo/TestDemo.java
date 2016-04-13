@@ -20,8 +20,8 @@ public class TestDemo {
 //		callFunction();//调用云代码
 //		findPayOrder();//查询支付订单
 //		count();//计数
-//		upload();//上传文件
-		requestSms();//发送短信
+		upload();//上传文件
+		// requestSms();//发送短信
 	}
 	
 	//使用RestAPI前必须先初始化，KEY可在Bmob应用信息里查询。

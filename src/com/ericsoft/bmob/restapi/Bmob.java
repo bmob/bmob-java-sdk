@@ -674,51 +674,6 @@ public class Bmob {
 		return result;
 	}	
 
-	//这个上传文件接口将于2016.07.13正式下线,请开发者尽快升级并使用uploadFile2接口
-	public static String uploadFile(String file){
-		String result = STRING_EMPTY;
-		if(isInit()){
-			HttpURLConnection conn = null;
-			//获取文件名
-	        String fileName = file.trim();  
-	        fileName = fileName.substring(fileName.lastIndexOf("/")+1);  
-	        
-			String mURL = "https://api.bmob.cn/1/files/"+fileName;
-			try {
-				
-				FileInputStream fis = new FileInputStream(file);
-				
-			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_POST);
-			    conn.setDoOutput(true);
-			    conn.connect();
-			    
-			    //一次读多个字节 
-				byte[] tempbytes = new byte[1]; 
-				int byteread = 0; 
-				int i=0;
-				ByteArrayOutputStream byteArr = new ByteArrayOutputStream();
-				OutputStream os = conn.getOutputStream();
-				 while((byteread=fis.read(tempbytes))!=-1)  
-			    {  
-					 os.write(tempbytes);
-			    }  
-				
-				os.flush();
-				os.close();
-				fis.close();			    
-			    			    
-	            result = getResultFromConnection(conn);
-		        conn.disconnect();
-			} catch (FileNotFoundException e){
-			    result = MSG_FILE_NOT_FOUND + CHAR_RISK + e.getMessage();
-			} catch (Exception e) {
-			    result = MSG_ERROR + CHAR_RISK + e.getMessage();
-			}
-		}else{
-			result = MSG_UNREGISTERED;
-		}
-		return result;
-	}
 	
 	public static String uploadFile2(String file){
 		String result = STRING_EMPTY;

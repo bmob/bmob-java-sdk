@@ -1,4 +1,4 @@
-package com.ericsoft.demo;
+﻿package com.ericsoft.demo;
 
 import java.util.Date;
 
@@ -16,11 +16,11 @@ public class TestDemo {
 //		Search();//查询
 //		update();//修改
 //		delete();//删除
-//		insert();//新增
+		insert();//新增
 //		callFunction();//调用云代码
 //		findPayOrder();//查询支付订单
 //		count();//计数
-		upload();//上传文件
+//		upload();//上传文件
 		// requestSms();//发送短信
 	}
 	
@@ -37,7 +37,7 @@ public class TestDemo {
 		String res=Bmob.uploadFile2("/tmp/myPicture.jpg");
 		System.out.println(res);
 	}
-	
+	  
 	private static void requestSms(){
 		String res=Bmob.requestSms("13168391111","您的验证码是：222222, 有效期是10分钟。");
 		System.out.println(res);		

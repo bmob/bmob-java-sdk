@@ -150,7 +150,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/classes/"+tableName+"/"+objectId;
+			String mURL = "https://api2.bmob.cn/1/classes/"+tableName+"/"+objectId;
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_GET);
 			    conn.connect();
@@ -339,7 +339,7 @@ public class Bmob {
 			limit = limit < 0 ? 0 : limit;
 			limit = limit > 1000 ? 1000 : limit;
 			where = where.equals(STRING_EMPTY) ? "{}" : where;
-			String mURL = "https://api.bmob.cn/1/classes/"+tableName+"?where="+urlEncoder(where)+"&limit="+limit + "&skip="+skip + "&order=" + order + "&keys=" + keys;
+			String mURL = "https://api2.bmob.cn/1/classes/"+tableName+"?where="+urlEncoder(where)+"&limit="+limit + "&skip="+skip + "&order=" + order + "&keys=" + keys;
 
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_GET);
@@ -377,7 +377,7 @@ public class Bmob {
 		if(isInit()){
 			HttpURLConnection conn = null;
 			BQL = urlEncoder(BQL) + "&values=[" + urlEncoder(value)+"]";
-			String mURL = "https://api.bmob.cn/1/cloudQuery?bql="+BQL ;
+			String mURL = "https://api2.bmob.cn/1/cloudQuery?bql="+BQL ;
 			
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_GET);
@@ -404,7 +404,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/timestamp/";
+			String mURL = "https://api2.bmob.cn/1/timestamp/";
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_GET);
 			    conn.connect();
@@ -440,7 +440,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/classes/"+tableName+"?where="+urlEncoder(where)+"&count=1&limit=0";
+			String mURL = "https://api2.bmob.cn/1/classes/"+tableName+"?where="+urlEncoder(where)+"&count=1&limit=0";
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_GET);
 			    conn.connect();
@@ -479,7 +479,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/classes/"+tableName+"/"+objectId;
+			String mURL = "https://api2.bmob.cn/1/classes/"+tableName+"/"+objectId;
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_PUT);
 			    conn.setDoOutput(true);
@@ -508,7 +508,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/classes/"+tableName;
+			String mURL = "https://api2.bmob.cn/1/classes/"+tableName;
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_POST);
 			    conn.setDoOutput(true);
@@ -538,7 +538,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/classes/"+tableName+"/"+objectId;
+			String mURL = "https://api2.bmob.cn/1/classes/"+tableName+"/"+objectId;
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_DELETE);
 			    conn.connect();
@@ -564,7 +564,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/pay/"+payId;
+			String mURL = "https://api2.bmob.cn/1/pay/"+payId;
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_GET);
 			    conn.connect();
@@ -593,7 +593,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/push";
+			String mURL = "https://api2.bmob.cn/1/push";
 			try {
 				conn = connectionCommonSetting(conn, new URL(mURL), METHOD_POST);
 				conn.setDoOutput(true);
@@ -623,7 +623,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/functions/"+funcName;
+			String mURL = "https://api2.bmob.cn/1/functions/"+funcName;
 			try {
 			    conn = connectionCommonSetting(conn, new URL(mURL), METHOD_POST);
 			    conn.setDoOutput(true);
@@ -652,7 +652,7 @@ public class Bmob {
 		String result = STRING_EMPTY;
 		if(isInit()){
 			HttpURLConnection conn = null;
-			String mURL = "https://api.bmob.cn/1/requestSms";
+			String mURL = "https://api2.bmob.cn/1/requestSms";
 			try {
 				BSONObject bson = new BSONObject();
 				bson.put("mobilePhoneNumber", mobileNum);
@@ -683,7 +683,7 @@ public class Bmob {
 	        String fileName = file.trim();  
 	        fileName = fileName.substring(fileName.lastIndexOf("/")+1);  
 	        
-			String mURL = "https://api.bmob.cn/2/files/"+fileName;
+			String mURL = "https://api2.bmob.cn/2/files/"+fileName;
 			try {
 				
 				FileInputStream fis = new FileInputStream(file);

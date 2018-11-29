@@ -1,9 +1,8 @@
 package cn.bmob.java;
 
-import cn.bmob.Bmob;
-import cn.bmob.config.BaseConfig;
-import cn.bmob.example.bean.StudentScore;
-import cn.bmob.api.BmobApiService;
+import cn.bmob.data.Bmob;
+import cn.bmob.data.config.BaseConfig;
+import cn.bmob.data.api.BmobApiService;
 import com.google.gson.JsonObject;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
@@ -41,8 +40,6 @@ public class BmobTest {
 //        JsonObject jsonObject = new JsonObject();
 //        jsonObject.addProperty("playerName","二麻子3");
 //        jsonObject.addProperty("score", 59.5);
-        StudentScore studentScore = new StudentScore("张三", 65);
-        call = bmobApiService.insert(mTableName, studentScore);
 
         JsonObject ret = commit(call);
         Assert.assertNotNull(ret);

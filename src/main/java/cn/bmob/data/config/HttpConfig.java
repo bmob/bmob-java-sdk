@@ -1,4 +1,4 @@
-package cn.bmob.config;
+package cn.bmob.data.config;
 
 public class HttpConfig extends BaseConfig {
 

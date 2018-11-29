@@ -1,8 +1,6 @@
-package cn.bmob.config;
+package cn.bmob.data.config;
 
 import lombok.Data;
-
-import java.lang.ref.SoftReference;
 
 /**
  * SDK的默认配置
@@ -10,8 +8,8 @@ import java.lang.ref.SoftReference;
 @Data
 public class BaseConfig {
 
-    public static String appId = "";
-    public static String apiKey = "";
+    public static String appId = "12784168944a56ae41c4575686b7b332";
+    public static String apiKey = "9e8ffb8e0945092d1a6b3562741ae564";
 
     /* 是否调试 */
     private boolean debug = false;
@@ -19,7 +17,7 @@ public class BaseConfig {
     /*是否需要缓存处理*/
     private boolean cache;
     /*基础url*/
-    public static String baseUrl = "https://api.bmob.cn/";
+    public static String baseUrl = "https://api2.bmob.cn";
     /*方法-如果需要缓存必须设置这个参数；不需要不用設置*/
     private String method="";
     /*超时时间-默认6秒*/

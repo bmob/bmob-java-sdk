@@ -27,5 +27,11 @@ public class BmobQuery<T> {
 
 
 
+
+
+
+
+
+
 }
 

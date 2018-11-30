@@ -1,4 +1,4 @@
-package cn.bmob.data.callback;
+package cn.bmob.data.callback.base;
 
 import cn.bmob.data.exception.BmobException;
 

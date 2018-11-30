@@ -1,11 +1,12 @@
 package cn.bmob.data.utils;
 
 import cn.bmob.data.bean.BmobResponse;
-import cn.bmob.data.callback.BmobCallback;
-import cn.bmob.data.callback.DeleteListener;
-import cn.bmob.data.callback.UpdateListener;
-import cn.bmob.data.callback.get.BmobGetCallback;
-import cn.bmob.data.callback.save.BmobSaveCallback;
+import cn.bmob.data.callback.base.BmobCallback;
+import cn.bmob.data.callback.base.BmobOkCallback;
+import cn.bmob.data.callback.object.UpdateListener;
+import cn.bmob.data.callback.base.BmobGetCallback;
+import cn.bmob.data.callback.base.BmobSaveCallback;
+import cn.bmob.data.callback.sms.SendSmsCodeListener;
 import cn.bmob.data.exception.BmobException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -131,10 +132,12 @@ public class Utils {
                 ((BmobGetCallback) bmobCallback).onSuccess(Utils.getObjectFromResponseAndBmobCallback(response, bmobCallback));
             } else if (bmobCallback instanceof BmobSaveCallback) {
                 ((BmobSaveCallback) bmobCallback).onSuccess(bmobResponse.getObjectId(), bmobResponse.getCreatedAt());
+            } else if (bmobCallback instanceof BmobOkCallback) {
+                ((BmobOkCallback) bmobCallback).onSuccess(bmobResponse.getMsg());
             } else if (bmobCallback instanceof UpdateListener) {
                 ((UpdateListener) bmobCallback).onSuccess(bmobResponse.getUpdatedAt());
-            } else if (bmobCallback instanceof DeleteListener) {
-                ((DeleteListener) bmobCallback).onSuccess(bmobResponse.getMsg());
+            } else if (bmobCallback instanceof SendSmsCodeListener) {
+                ((SendSmsCodeListener) bmobCallback).onSuccess(bmobResponse.getSmsId());
             }
 
         } else {
@@ -163,5 +166,17 @@ public class Utils {
                 handleThrowable(t, bmobCallback);
             }
         });
+    }
+
+
+    /**
+     * 判断字符串是否为空
+     *
+     * @param string
+     * @return
+     */
+    public static boolean isStringEmpty(String string) {
+        boolean result = string == null || string.length() == 0;
+        return result;
     }
 }

@@ -1,4 +1,6 @@
-package cn.bmob.data.callback.save;
+package cn.bmob.data.callback.user;
+
+import cn.bmob.data.callback.base.BmobSaveCallback;
 
 public abstract class SignUpListener extends BmobSaveCallback {
 

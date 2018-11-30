@@ -70,8 +70,29 @@ public interface BmobApiService {
     Call<JsonObject> signUp(@Body Object object);
 
 
-
     @GET("/1/login")
-    Call<JsonObject> login(@Query("username") String username,@Query("password") String password);
+    Call<JsonObject> login(@Query("username") String username, @Query("password") String password);
+
+
+    /**
+     * 发送短信
+     *
+     * @param object
+     * @return
+     */
+    @POST("/1/requestSmsCode")
+    Call<JsonObject> sendSmsCode(@Body Object object);
+
+
+    /**
+     * 验证短信验证码
+     *
+     * @param smsCode
+     * @param object
+     * @return
+     */
+    @POST("/1/verifySmsCode/{smsCode}")
+    Call<JsonObject> verifySmsCode(@Path("smsCode") String smsCode, @Body Object object);
+
 
 }

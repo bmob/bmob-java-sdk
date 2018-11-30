@@ -1,11 +1,15 @@
 package cn.bmob.data;
 
+import cn.bmob.data.bean.BmobSms;
 import cn.bmob.data.bean.BmobUser;
-import cn.bmob.data.callback.*;
-import cn.bmob.data.callback.get.GetListener;
-import cn.bmob.data.callback.get.LoginListener;
-import cn.bmob.data.callback.save.SaveListener;
-import cn.bmob.data.callback.save.SignUpListener;
+import cn.bmob.data.callback.object.DeleteListener;
+import cn.bmob.data.callback.object.GetListener;
+import cn.bmob.data.callback.user.LoginListener;
+import cn.bmob.data.callback.object.UpdateListener;
+import cn.bmob.data.callback.object.SaveListener;
+import cn.bmob.data.callback.user.SignUpListener;
+import cn.bmob.data.callback.sms.SendSmsCodeListener;
+import cn.bmob.data.callback.sms.VerifySmsCodeListener;
 import cn.bmob.data.config.HttpConfig;
 import cn.bmob.data.exception.BmobException;
 
@@ -19,8 +23,46 @@ public class Test {
         Bmob.getInstance().init(HttpConfig.appId, HttpConfig.apiKey);
 
 
-        signUp();
-        saveObject();
+//        signUp();
+//        saveObject();
+
+        sendSms();
+        verifySmsCode();
+    }
+
+    private static void verifySmsCode() {
+
+        BmobSms bmobSms = new BmobSms();
+        bmobSms.setMobilePhoneNumber("13760289294");
+        bmobSms.verifySmsCode("", new VerifySmsCodeListener() {
+            @Override
+            public void onSuccess(String msg) {
+                System.out.println("验证短信验证码成功：" + msg);
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println("验证短信验证码失败：" + ex.getMessage());
+            }
+        });
+    }
+
+    private static void sendSms() {
+
+        BmobSms bmobSms = new BmobSms();
+//        bmobSms.setMobilePhoneNumber("13760289294");
+        bmobSms.setTemplate("template");
+        bmobSms.sendSmsCode(new SendSmsCodeListener() {
+            @Override
+            public void onSuccess(String smsId) {
+                System.out.println("发送短信成功：" + smsId);
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println("发送短信失败：" + ex.getCode() + "-" + ex.getMessage());
+            }
+        });
     }
 
     /**
@@ -37,7 +79,7 @@ public class Test {
 
             @Override
             public void onSuccess(String objectId, String createdAt) {
-                System.out.println("sign up "+objectId + "-" + createdAt);
+                System.out.println("sign up " + objectId + "-" + createdAt);
                 login(username, password);
             }
 
@@ -62,7 +104,7 @@ public class Test {
         bmobUser.setPassword(password);
         bmobUser.login(new LoginListener<BmobUser>() {
             public void onSuccess(BmobUser user) {
-                System.out.println("login "+user.getUsername() + user.getSessionToken());
+                System.out.println("login " + user.getUsername() + user.getSessionToken());
             }
 
 
@@ -108,7 +150,7 @@ public class Test {
         gameScore.get(new GetListener<GameScore>() {
             @Override
             public void onSuccess(GameScore gameScore) {
-                System.out.println("get：" + gameScore.getPlayerName() + "-" + gameScore.getScore());
+                System.out.println("user：" + gameScore.getPlayerName() + "-" + gameScore.getScore());
 
                 delete(objectId);
             }

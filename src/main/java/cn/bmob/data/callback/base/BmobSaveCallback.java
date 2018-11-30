@@ -1,6 +1,4 @@
-package cn.bmob.data.callback.save;
-
-import cn.bmob.data.callback.BmobCallback;
+package cn.bmob.data.callback.base;
 
 public abstract class BmobSaveCallback extends BmobCallback {
     /**

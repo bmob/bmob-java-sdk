@@ -3,10 +3,10 @@ package cn.bmob.data.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 import cn.bmob.data.Bmob;
-import cn.bmob.data.callback.DeleteListener;
-import cn.bmob.data.callback.get.GetListener;
-import cn.bmob.data.callback.save.SaveListener;
-import cn.bmob.data.callback.UpdateListener;
+import cn.bmob.data.callback.object.DeleteListener;
+import cn.bmob.data.callback.object.GetListener;
+import cn.bmob.data.callback.object.SaveListener;
+import cn.bmob.data.callback.object.UpdateListener;
 import com.google.gson.JsonObject;
 import retrofit2.Call;
 

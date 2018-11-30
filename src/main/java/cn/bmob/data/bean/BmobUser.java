@@ -1,8 +1,8 @@
 package cn.bmob.data.bean;
 
 import cn.bmob.data.Bmob;
-import cn.bmob.data.callback.get.LoginListener;
-import cn.bmob.data.callback.save.SignUpListener;
+import cn.bmob.data.callback.user.LoginListener;
+import cn.bmob.data.callback.user.SignUpListener;
 import com.google.gson.JsonObject;
 import retrofit2.Call;
 

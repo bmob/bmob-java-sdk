@@ -48,6 +48,12 @@ public class BmobResponse {
     private String sessionToken;
 
 
+    /**
+     * 短信ID
+     */
+    private String smsId;
+
+
     public String getCreatedAt() {
         return createdAt;
     }
@@ -104,5 +110,14 @@ public class BmobResponse {
 
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
+    }
+
+
+    public String getSmsId() {
+        return smsId;
+    }
+
+    public void setSmsId(String smsId) {
+        this.smsId = smsId;
     }
 }

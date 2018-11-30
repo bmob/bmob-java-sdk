@@ -1,7 +1,6 @@
-package cn.bmob.data.callback.get;
+package cn.bmob.data.callback.base;
 
-public abstract class GetListener<T> extends BmobGetCallback<T>{
-
+public abstract class BmobGetCallback<T> extends BmobCallback {
 
     /**
      * 获取成功，返回对象的信息

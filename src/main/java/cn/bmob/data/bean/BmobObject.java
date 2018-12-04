@@ -1,45 +1,48 @@
 package cn.bmob.data.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import cn.bmob.data.Bmob;
 import cn.bmob.data.callback.object.DeleteListener;
-import cn.bmob.data.callback.object.GetListener;
 import cn.bmob.data.callback.object.SaveListener;
 import cn.bmob.data.callback.object.UpdateListener;
+import cn.bmob.data.utils.Utils;
 import com.google.gson.JsonObject;
 import retrofit2.Call;
+
+import java.io.Serializable;
 
 import static cn.bmob.data.utils.Utils.request;
 
 
-public class BmobObject implements Parcelable {
+public class BmobObject implements Serializable {
 
 
-    public static final String CREATED_AT = "createdAt";
-    public static final String UPDATED_AT = "updatedAt";
-    public static final String OBJECT_ID = "objectId";
-
+    private JsonObject data;
 
     /**
      * 表名
      */
-    private transient String _c_;
+    private transient String tableName;
+
+
+    /**
+     * 类名
+     */
+    private transient String className;
 
     /**
      * 数据唯一标志
      */
-    private transient String objectId;
+    private String objectId;
 
     /**
      * 数据创建时间
      */
-    private transient String createdAt;
+    private String createdAt;
 
     /**
      * 数据更新时间
      */
-    private transient String updatedAt;
+    private String updatedAt;
 
     /**
      * 数据访问控制权限
@@ -51,21 +54,33 @@ public class BmobObject implements Parcelable {
      * 构造函数
      */
     public BmobObject() {
-        this._c_ = this.getClass().getSimpleName();
+        this.tableName = this.getClass().getSimpleName();
+        this.className = this.getClass().getSimpleName();
+        data = new JsonObject();
     }
 
 
     /**
      * 构造函数
      */
-    public BmobObject(String _c_) {
-        if (_c_ != null) {
-            this._c_ = _c_;
+    public BmobObject(String tableName) {
+        if (tableName != null) {
+            this.tableName = tableName;
         }
+        this.className = this.getClass().getSimpleName();
+        data = new JsonObject();
+    }
+
+
+    public JsonObject getData() {
+        return data;
+    }
+
+    public void setData(JsonObject data) {
+        this.data = data;
     }
 
     /**
-     *
      * @return
      */
     public String getObjectId() {
@@ -73,7 +88,6 @@ public class BmobObject implements Parcelable {
     }
 
     /**
-     *
      * @param objectId
      */
     public void setObjectId(String objectId) {
@@ -81,7 +95,6 @@ public class BmobObject implements Parcelable {
     }
 
     /**
-     *
      * @return
      */
     public String getCreatedAt() {
@@ -89,7 +102,6 @@ public class BmobObject implements Parcelable {
     }
 
     /**
-     *
      * @param createdAt
      */
     public void setCreatedAt(String createdAt) {
@@ -98,7 +110,6 @@ public class BmobObject implements Parcelable {
 
 
     /**
-     *
      * @return
      */
     public String getUpdatedAt() {
@@ -106,21 +117,28 @@ public class BmobObject implements Parcelable {
     }
 
     /**
-     *
      * @param updatedAt
      */
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public int describeContents() {
-        return 0;
+
+    public String getTableName() {
+        return tableName;
     }
 
-    public void writeToParcel(Parcel dest, int flags) {
-
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
     /**
      * 更新一行数据
@@ -128,7 +146,7 @@ public class BmobObject implements Parcelable {
      * @param updateListener
      */
     public void update(final UpdateListener updateListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().update(_c_, objectId, this);
+        Call<JsonObject> call = Bmob.getInstance().api().update(tableName, objectId, Utils.removeEssentialAttribute(this));
         request(call, updateListener);
     }
 
@@ -138,7 +156,10 @@ public class BmobObject implements Parcelable {
      * @param saveListener
      */
     public void save(final SaveListener saveListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().insert(_c_, this);
+        setObjectId(null);
+        setCreatedAt(null);
+        setUpdatedAt(null);
+        Call<JsonObject> call = Bmob.getInstance().api().insert(tableName, Utils.removeEssentialAttribute(this));
         request(call, saveListener);
     }
 
@@ -148,19 +169,24 @@ public class BmobObject implements Parcelable {
      * @param deleteListener
      */
     public void delete(final DeleteListener deleteListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().deleteRow(_c_, objectId);
+        Call<JsonObject> call = Bmob.getInstance().api().deleteRow(tableName, objectId);
         request(call, deleteListener);
     }
 
 
     /**
-     * 获取一条数据
+     * 子类是泛型的类型强转：父类转为子类
      *
-     * @param getListener
+     * @param object
+     * @param clazz
+     * @param <T>
+     * @return
      */
-    public <T> void get(final GetListener<T> getListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().get(_c_, objectId);
-        request(call, getListener);
+    protected static <T extends BmobObject> T bmobObjectCastSubClass(BmobObject object, Class<T> clazz) {
+        return (T) object;
     }
+
+
+
 
 }

@@ -2,10 +2,23 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+
   <groupId>cn.bmob.data</groupId>
   <artifactId>BmobJavaSDK</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>6</source>
+                    <target>6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <packaging>jar</packaging>
 
   <name>BmobJavaSDK</name>
   <url>http://maven.apache.org</url>
@@ -26,6 +39,8 @@
       <artifactId>converter-gson</artifactId>
       <version>2.3.0</version>
     </dependency>
+
+
     <!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/adapter-rxjava2 -->
     <dependency>
       <groupId>com.squareup.retrofit2</groupId>

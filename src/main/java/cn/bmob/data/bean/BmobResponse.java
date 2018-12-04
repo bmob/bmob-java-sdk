@@ -1,11 +1,24 @@
 package cn.bmob.data.bean;
 
-public class BmobResponse {
+import java.util.List;
+
+public class BmobResponse<T> {
+
 
     /**
-     * createdAt : 2018-11-29 11:42:55
-     * objectId : 32e462b07c
+     * 错误码
      */
+    private int code;
+    /**
+     * 错误信息
+     */
+    private String error;
+    
+    /**
+     * 数据唯一标志
+     */
+    private String objectId;
+
     /**
      * 数据创建时间
      */
@@ -16,24 +29,6 @@ public class BmobResponse {
      * 数据更新时间
      */
     private String updatedAt;
-
-
-    /**
-     * 数据唯一标志
-     */
-    private String objectId;
-    /**
-     * code : 105
-     * error : invalid field name: _c_.
-     */
-    /**
-     * 错误码
-     */
-    private int code;
-    /**
-     * 错误信息
-     */
-    private String error;
 
 
     /**
@@ -54,29 +49,8 @@ public class BmobResponse {
     private String smsId;
 
 
-    public String getCreatedAt() {
-        return createdAt;
-    }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
-    }
+    private List<T> results;
 
 
     public int getCode() {
@@ -95,6 +69,29 @@ public class BmobResponse {
         this.error = error;
     }
 
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     public String getMsg() {
         return msg;
@@ -112,12 +109,20 @@ public class BmobResponse {
         this.sessionToken = sessionToken;
     }
 
-
     public String getSmsId() {
         return smsId;
     }
 
     public void setSmsId(String smsId) {
         this.smsId = smsId;
+    }
+
+
+    public List<T> getResults() {
+        return results;
+    }
+
+    public void setResults(List<T> results) {
+        this.results = results;
     }
 }

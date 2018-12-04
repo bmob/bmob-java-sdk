@@ -1,14 +1,19 @@
 package cn.bmob.data.utils;
 
-import cn.bmob.data.bean.BmobResponse;
+import cn.bmob.data.bean.*;
 import cn.bmob.data.callback.base.BmobCallback;
-import cn.bmob.data.callback.base.BmobOkCallback;
-import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.base.BmobGetCallback;
+import cn.bmob.data.callback.base.BmobOkCallback;
 import cn.bmob.data.callback.base.BmobSaveCallback;
+import cn.bmob.data.callback.object.GetsListener;
+import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;
+import cn.bmob.data.callback.user.LoginListener;
+import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
 import cn.bmob.data.exception.BmobException;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -98,10 +103,25 @@ public class Utils {
      * @return
      * @throws IOException
      */
-    public static <T> T getObjectFromResponseAndBmobCallback(Response<JsonObject> response, BmobCallback bmobCallback) throws IOException {
+    public static <T extends BmobObject> T getObjectFromResponseAndBmobCallback(Response<JsonObject> response, BmobCallback bmobCallback) throws IOException {
         Class<T> clazz = Utils.getClassFromBmobCallback(bmobCallback);
         Gson gson = new Gson();
         return gson.fromJson(getJsonFromResponse(response), clazz);
+    }
+
+
+    /**
+     * 获取对象
+     *
+     * @param json
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws IOException
+     */
+    public static <T> T getObjectFromJson(String json, Class<T> clazz) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, clazz);
     }
 
 
@@ -129,6 +149,13 @@ public class Utils {
         if (bmobResponse.getCode() == 0) {
             //操作成功
             if (bmobCallback instanceof BmobGetCallback) {
+                //登录、短信验证码一键注册或登录
+                if (bmobCallback instanceof LoginListener || bmobCallback instanceof SignUpOrLoginSmsCodeListener) {
+                    //TODO 保存user的json信息到本地，还是内存中？B/S系统怎么存？C/S系统怎么存？
+
+                    String json = Utils.getJsonFromResponse(response);
+                    BmobUser.getInstance().setCurrUser(json);
+                }
                 ((BmobGetCallback) bmobCallback).onSuccess(Utils.getObjectFromResponseAndBmobCallback(response, bmobCallback));
             } else if (bmobCallback instanceof BmobSaveCallback) {
                 ((BmobSaveCallback) bmobCallback).onSuccess(bmobResponse.getObjectId(), bmobResponse.getCreatedAt());
@@ -138,6 +165,8 @@ public class Utils {
                 ((UpdateListener) bmobCallback).onSuccess(bmobResponse.getUpdatedAt());
             } else if (bmobCallback instanceof SendSmsCodeListener) {
                 ((SendSmsCodeListener) bmobCallback).onSuccess(bmobResponse.getSmsId());
+            } else if (bmobCallback instanceof GetsListener) {
+                ((GetsListener) bmobCallback).onSuccess(bmobResponse.getResults());
             }
 
         } else {
@@ -178,5 +207,118 @@ public class Utils {
     public static boolean isStringEmpty(String string) {
         boolean result = string == null || string.length() == 0;
         return result;
+    }
+
+
+    /**
+     * 将由服务器生成的基础属性的值置空
+     * 使用transient：没办法使得反序列化包含这些属性值
+     * 使用Expose：没办法使得序列化去除这些属性值
+     *
+     * @param bmobObject
+     * @return
+     */
+    public static BmobObject removeEssentialAttribute(BmobObject bmobObject) {
+        bmobObject.setObjectId(null);
+        bmobObject.setCreatedAt(null);
+        bmobObject.setUpdatedAt(null);
+        return bmobObject;
+    }
+
+
+    /**
+     * @param className
+     * @return
+     */
+    public static Class<? extends BmobObject> getBmobObjectClassByClassName(String className) {
+        if (className.equals(BmobRole.class.getSimpleName())) {
+            return BmobRole.class;
+        } else if (className.equals(BmobUser.class.getSimpleName())) {
+            return BmobUser.class;
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * 从对象中获取对应的表名
+     *
+     * @param object
+     * @return
+     */
+    public static String getTableNameFromObject(Object object) {
+        if (object instanceof BmobUser) {
+            return "_User";
+        } else if (object instanceof BmobRole) {
+            return "_Role";
+        } else if (object instanceof BmobArticle) {
+            return "_Article";
+        } else if (object instanceof BmobInstallation) {
+            return "_Installation";
+        } else if (object instanceof BmobObject) {
+            BmobObject bmobObject = (BmobObject) object;
+            return bmobObject.getClass().getSimpleName();
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * 从对象中获取objectId
+     *
+     * @param value
+     * @return
+     */
+    public static String getObjectIdFromObject(Object value) {
+        if (value instanceof BmobObject) {
+            BmobObject bmobObject = (BmobObject) value;
+            return bmobObject.getObjectId();
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * @param jsonObject
+     * @param key
+     * @param value
+     * @return
+     */
+    public static JsonObject add2Object(JsonObject jsonObject, String key, Object value) {
+        if (value instanceof Number) {
+            jsonObject.addProperty(key, (Number) value);
+        } else if (value instanceof String) {
+            jsonObject.addProperty(key, (String) value);
+        } else if (value instanceof Character) {
+            jsonObject.addProperty(key, (Character) value);
+        } else if (value instanceof Boolean) {
+            jsonObject.addProperty(key, (Boolean) value);
+        } else {
+            jsonObject.add(key, (JsonElement) value);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * @param jsonArray
+     * @param value
+     * @return
+     */
+    public static JsonArray add2Array(JsonArray jsonArray, Object value) {
+        if (value instanceof Number) {
+            jsonArray.add((Number) value);
+        } else if (value instanceof String) {
+            jsonArray.add((String) value);
+        } else if (value instanceof Character) {
+            jsonArray.add((Character) value);
+        } else if (value instanceof Boolean) {
+            jsonArray.add((Boolean) value);
+        } else {
+            jsonArray.add((JsonElement) value);
+        }
+        return jsonArray;
     }
 }

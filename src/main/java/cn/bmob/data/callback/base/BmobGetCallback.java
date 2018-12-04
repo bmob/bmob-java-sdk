@@ -1,6 +1,8 @@
 package cn.bmob.data.callback.base;
 
-public abstract class BmobGetCallback<T> extends BmobCallback {
+import cn.bmob.data.bean.BmobObject;
+
+public abstract class BmobGetCallback<T extends BmobObject> extends BmobCallback {
 
     /**
      * 获取成功，返回对象的信息

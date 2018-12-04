@@ -1,17 +1,18 @@
 package cn.bmob.data;
 
+import cn.bmob.data.bean.BmobQuery;
 import cn.bmob.data.bean.BmobSms;
 import cn.bmob.data.bean.BmobUser;
-import cn.bmob.data.callback.object.DeleteListener;
-import cn.bmob.data.callback.object.GetListener;
+import cn.bmob.data.callback.object.*;
 import cn.bmob.data.callback.user.LoginListener;
-import cn.bmob.data.callback.object.UpdateListener;
-import cn.bmob.data.callback.object.SaveListener;
 import cn.bmob.data.callback.user.SignUpListener;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;
 import cn.bmob.data.callback.sms.VerifySmsCodeListener;
+import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
 import cn.bmob.data.config.HttpConfig;
 import cn.bmob.data.exception.BmobException;
+
+import java.util.List;
 
 public class Test {
 
@@ -26,15 +27,49 @@ public class Test {
 //        signUp();
 //        saveObject();
 
-        sendSms();
-        verifySmsCode();
+//        sendSms();
+//        verifySmsCode();
+//        signUpOrLoginSmsCode();
+
+
+        gets();
+
+
+    }
+
+    private static void getUserInfo(String objectId) {
+        BmobUser.getUserInfo(objectId, new GetListener<BmobUser>() {
+            @Override
+            public void onSuccess(BmobUser user) {
+                System.out.println("user info " + user.getUsername() + "-" + user.getObjectId());
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+            }
+        });
+        //相当于
+
+        BmobQuery bmobQuery = new BmobQuery();
+        bmobQuery.get(objectId, new GetListener<BmobUser>() {
+            @Override
+            public void onSuccess(BmobUser user) {
+                System.out.println("user info " + user.getUsername() + "-" + user.getObjectId());
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+            }
+        });
     }
 
     private static void verifySmsCode() {
 
         BmobSms bmobSms = new BmobSms();
         bmobSms.setMobilePhoneNumber("13760289294");
-        bmobSms.verifySmsCode("", new VerifySmsCodeListener() {
+        bmobSms.verifySmsCode("090235", new VerifySmsCodeListener() {
             @Override
             public void onSuccess(String msg) {
                 System.out.println("验证短信验证码成功：" + msg);
@@ -50,8 +85,8 @@ public class Test {
     private static void sendSms() {
 
         BmobSms bmobSms = new BmobSms();
-//        bmobSms.setMobilePhoneNumber("13760289294");
-        bmobSms.setTemplate("template");
+        bmobSms.setMobilePhoneNumber("13760289294");
+//        bmobSms.setTemplate("template");
         bmobSms.sendSmsCode(new SendSmsCodeListener() {
             @Override
             public void onSuccess(String smsId) {
@@ -61,6 +96,27 @@ public class Test {
             @Override
             public void onFailure(BmobException ex) {
                 System.err.println("发送短信失败：" + ex.getCode() + "-" + ex.getMessage());
+            }
+        });
+    }
+
+
+    /**
+     * 注册
+     */
+    private static void signUpOrLoginSmsCode() {
+        BmobUser bmobUser = new BmobUser();
+        bmobUser.setMobilePhoneNumber("13760289294");
+        bmobUser.setSmsCode("692199");
+        bmobUser.signUpOrLoginSmsCode(new SignUpOrLoginSmsCodeListener<BmobUser>() {
+            @Override
+            public void onSuccess(BmobUser user) {
+                System.out.println("sign up " + user.getUsername() + "-" + user.getObjectId());
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
             }
         });
     }
@@ -80,7 +136,8 @@ public class Test {
             @Override
             public void onSuccess(String objectId, String createdAt) {
                 System.out.println("sign up " + objectId + "-" + createdAt);
-                login(username, password);
+                getUserInfo(objectId);
+//                login(username, password);
             }
 
 
@@ -144,13 +201,11 @@ public class Test {
      * @param objectId
      */
     private static void get(final String objectId) {
-
-        GameScore gameScore = new GameScore();
-        gameScore.setObjectId(objectId);
-        gameScore.get(new GetListener<GameScore>() {
+        BmobQuery bmobQuery = new BmobQuery();
+        bmobQuery.get(objectId, new GetListener<GameScore>() {
             @Override
             public void onSuccess(GameScore gameScore) {
-                System.out.println("user：" + gameScore.getPlayerName() + "-" + gameScore.getScore());
+                System.out.println("user：" + gameScore.getPlayerName() + "-" + gameScore.getScore() + gameScore.getObjectId() + "-" + gameScore.getCreatedAt() + "-" + gameScore.getUpdatedAt());
 
                 delete(objectId);
             }
@@ -158,6 +213,30 @@ public class Test {
             @Override
             public void onFailure(BmobException ex) {
                 System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+            }
+        });
+    }
+
+
+    /**
+     * 获取一条数据
+     */
+    private static void gets() {
+        BmobQuery bmobQuery = new BmobQuery();
+        bmobQuery.addWhereEqualTo("score", 10);
+        bmobQuery.getsWhere(new GetsListener<GameScore>() {
+            @Override
+            public void onSuccess(List<GameScore> array) {
+
+
+                System.out.println(array.size() + " gets");
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+
+
+                System.err.println(ex.getMessage());
             }
         });
     }

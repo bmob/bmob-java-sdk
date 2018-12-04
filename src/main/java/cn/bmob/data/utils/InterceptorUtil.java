@@ -28,6 +28,7 @@ public class InterceptorUtil {
                         .addHeader("Content-Type", "application/json; charset=UTF-8")
                         .addHeader("X-Bmob-Application-Id", Bmob.getInstance().getAppId())
                         .addHeader("X-Bmob-REST-API-Key", Bmob.getInstance().getApiKey())
+                        .addHeader("X-Bmob-REST-API-Key", Bmob.getInstance().getApiKey())
                         .build();
                 return chain.proceed(request);
             }

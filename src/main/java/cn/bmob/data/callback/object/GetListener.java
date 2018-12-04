@@ -1,8 +1,9 @@
 package cn.bmob.data.callback.object;
 
+import cn.bmob.data.bean.BmobObject;
 import cn.bmob.data.callback.base.BmobGetCallback;
 
-public abstract class GetListener<T> extends BmobGetCallback<T> {
+public abstract class GetListener<T extends BmobObject> extends BmobGetCallback<T> {
 
 
     /**

@@ -1,6 +1,7 @@
 package cn.bmob.data.bean;
 
 import cn.bmob.data.Bmob;
+import cn.bmob.data.callback.object.CountListener;
 import cn.bmob.data.callback.object.GetListener;
 import cn.bmob.data.callback.object.GetsListener;
 import cn.bmob.data.utils.Utils;
@@ -9,10 +10,7 @@ import com.google.gson.JsonObject;
 import com.oracle.javafx.jmx.json.JSONException;
 import retrofit2.Call;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static cn.bmob.data.utils.Utils.request;
@@ -23,21 +21,127 @@ public class BmobQuery {
     /**
      * 查询条件
      */
-    private JsonObject where =new JsonObject();
-
-
+    private JsonObject where = new JsonObject();
     /**
-     * 指定列
+     * 查询指定列
      */
     private String keys;
-
+    /**
+     * 查询限制条数
+     */
     private Integer limit;
+    /**
+     * 查询跳过条数
+     */
     private Integer skip;
+    /**
+     * 查询结果排序规则
+     */
     private String order;
+    /**
+     * 查询结果包含信息
+     */
     private String include;
+    /**
+     *
+     */
+    private Integer count;
+    /**
+     *
+     */
+    private Boolean groupcount;
+    /**
+     *
+     */
+    private String groupby;
+    /**
+     *
+     */
+    private String sum;
+    /**
+     *
+     */
+    private String average;
+    /**
+     *
+     */
+    private String max;
+    /**
+     *
+     */
+    private String min;
+    /**
+     *
+     */
+    private String having;
 
 
-    public JsonObject getWhere() {
+    private Integer getCount() {
+        return count;
+    }
+
+    private void setCount(Integer count) {
+        this.count = count;
+    }
+
+    private Boolean getGroupcount() {
+        return groupcount;
+    }
+
+    public void setGroupcount(Boolean groupcount) {
+        this.groupcount = groupcount;
+    }
+
+    private String getGroupby() {
+        return groupby;
+    }
+
+    public void setGroupby(String groupby) {
+        this.groupby = groupby;
+    }
+
+    private String getSum() {
+        return sum;
+    }
+
+    public void setSum(String sum) {
+        this.sum = sum;
+    }
+
+    private String getAverage() {
+        return average;
+    }
+
+    public void setAverage(String average) {
+        this.average = average;
+    }
+
+    private String getMax() {
+        return max;
+    }
+
+    public void setMax(String max) {
+        this.max = max;
+    }
+
+    private String getMin() {
+        return min;
+    }
+
+    public void setMin(String min) {
+        this.min = min;
+    }
+
+    private String getHaving() {
+        return having;
+    }
+
+    public void setHaving(String having) {
+        this.having = having;
+    }
+
+
+    private JsonObject getWhere() {
         return where;
     }
 
@@ -46,7 +150,7 @@ public class BmobQuery {
     }
 
 
-    public String getKeys() {
+    private String getKeys() {
         return keys;
     }
 
@@ -54,7 +158,7 @@ public class BmobQuery {
         this.keys = keys;
     }
 
-    public Integer getLimit() {
+    private Integer getLimit() {
         return limit;
     }
 
@@ -62,7 +166,7 @@ public class BmobQuery {
         this.limit = limit;
     }
 
-    public Integer getSkip() {
+    private Integer getSkip() {
         return skip;
     }
 
@@ -70,7 +174,7 @@ public class BmobQuery {
         this.skip = skip;
     }
 
-    public String getOrder() {
+    private String getOrder() {
         return order;
     }
 
@@ -78,7 +182,7 @@ public class BmobQuery {
         this.order = order;
     }
 
-    public String getInclude() {
+    private String getInclude() {
         return include;
     }
 
@@ -605,11 +709,11 @@ public class BmobQuery {
      * @param getListener
      * @param <T>
      */
-    public <T extends BmobObject> void get(String objectId, final GetListener<T> getListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().get(Utils.getClassFromBmobCallback(getListener).getSimpleName(), objectId);
+    public <T> void getObject(String objectId, final GetListener<T> getListener) {
+        Map<String, Object> map = buildMap();
+        Call<JsonObject> call = Bmob.getInstance().api().get(Utils.getClassFromBmobCallback(getListener).getSimpleName(), objectId, map);
         request(call, getListener);
     }
-
 
     /**
      * 获取多条数据
@@ -617,21 +721,80 @@ public class BmobQuery {
      * @param getsListener
      * @param <T>
      */
-    public <T extends BmobObject> void gets(GetsListener<T> getsListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().find(Utils.getClassFromBmobCallback(getsListener).getSimpleName());
+    public <T> void getObjects(GetsListener<T> getsListener) {
+        Map<String, Object> map = buildMap();
+
+        Call<JsonObject> call = Bmob.getInstance().api().getObjects(Utils.getClassFromBmobCallback(getsListener).getSimpleName(), map);
         request(call, getsListener);
     }
 
-        /**
-         * 获取多条数据
-         *
-         * @param getsListener
-         * @param <T>
-         */
-        public <T extends BmobObject > void getsWhere (GetsListener < T > getsListener) {
-            Call<JsonObject> call = Bmob.getInstance().api().findWhere(Utils.getClassFromBmobCallback(getsListener).getSimpleName(),where);
-            request(call, getsListener);
+
+    /**
+     * @param countListener
+     * @param <T>
+     */
+    public <T> void getCount(CountListener<T> countListener) {
+        setCount(1);
+        setLimit(0);
+        Map<String, Object> map = buildMap();
+        Call<JsonObject> call = Bmob.getInstance().api().getObjects(Utils.getClassFromBmobCallback(countListener).getSimpleName(), map);
+        request(call, countListener);
+    }
+
+
+    /**
+     * 构建查询条件
+     *
+     * @return
+     */
+    private Map<String, Object> buildMap() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        //查询条件
+        if (getWhere().size() > 0) {
+            map.put("where", getWhere());
         }
+        //对结果进行处理
+        if (getLimit() != null) {
+            map.put("limit", getLimit());
+        }
+        if (getSkip() != null) {
+            map.put("skip", getSkip());
+        }
+        if (!Utils.isStringEmpty(getOrder())) {
+            map.put("order", getOrder());
+        }
+        if (!Utils.isStringEmpty(getInclude())) {
+            map.put("include", getInclude());
+        }
+        if (getCount() != null) {
+            map.put("count", getCount());
+        }
+        if (!Utils.isStringEmpty(getKeys())) {
+            map.put("keys", getKeys());
+        }
+        if (!Utils.isStringEmpty(getGroupby())) {
+            map.put("groupby", getGroupby());
+        }
+        if (getGroupcount() != null) {
+            map.put("groupcount", getGroupcount());
+        }
+        if (!Utils.isStringEmpty(getSum())) {
+            map.put("sum", getSum());
+        }
+        if (!Utils.isStringEmpty(getAverage())) {
+            map.put("average", getAverage());
+        }
+        if (!Utils.isStringEmpty(getMax())) {
+            map.put("max", getMax());
+        }
+        if (!Utils.isStringEmpty(getMin())) {
+            map.put("min", getMin());
+        }
+        if (!Utils.isStringEmpty(getHaving())) {
+            map.put("having", getHaving());
+        }
+        return map;
+    }
 
 
 }

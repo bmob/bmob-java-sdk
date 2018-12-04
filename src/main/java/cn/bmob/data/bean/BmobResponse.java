@@ -49,9 +49,47 @@ public class BmobResponse<T> {
     private String smsId;
 
 
-
+    /**
+     *
+     */
     private List<T> results;
 
+
+    /**
+     *
+     */
+    private int count;
+
+
+    /**
+     * CDN平台
+     */
+    private String cdn;
+
+
+    /**
+     * 文件名称
+     */
+    private String filename;
+
+    /**
+     * 文件地址
+     */
+    private String url;
+
+
+    /**
+     * 删除失败的CDN和对应地址列表
+     */
+    private String fail;
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 
     public int getCode() {
         return code;
@@ -124,5 +162,39 @@ public class BmobResponse<T> {
 
     public void setResults(List<T> results) {
         this.results = results;
+    }
+
+
+    public String getCdn() {
+        return cdn;
+    }
+
+    public void setCdn(String cdn) {
+        this.cdn = cdn;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+
+    public String getFail() {
+        return fail;
+    }
+
+    public void setFail(String fail) {
+        this.fail = fail;
     }
 }

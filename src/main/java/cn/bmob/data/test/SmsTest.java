@@ -1,38 +1,39 @@
-package cn.bmob.data;
+package cn.bmob.data.test;
 
+import cn.bmob.data.Bmob;
 import cn.bmob.data.bean.BmobQuery;
 import cn.bmob.data.bean.BmobSms;
 import cn.bmob.data.bean.BmobUser;
-import cn.bmob.data.callback.object.*;
-import cn.bmob.data.callback.user.LoginListener;
-import cn.bmob.data.callback.user.SignUpListener;
+import cn.bmob.data.callback.object.DeleteListener;
+import cn.bmob.data.callback.object.GetListener;
+import cn.bmob.data.callback.object.SaveListener;
+import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;
 import cn.bmob.data.callback.sms.VerifySmsCodeListener;
+import cn.bmob.data.callback.user.LoginListener;
+import cn.bmob.data.callback.user.SignUpListener;
 import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
-import cn.bmob.data.config.HttpConfig;
 import cn.bmob.data.exception.BmobException;
 
-import java.util.List;
+public class SmsTest {
 
-public class Test {
+
+    public static String appId = "12784168944a56ae41c4575686b7b332";
+    public static String apiKey = "9e8ffb8e0945092d1a6b3562741ae564";
 
 
     public static void main(String[] args) {
         //TODO Application Entrance
 
 
-        Bmob.getInstance().init(HttpConfig.appId, HttpConfig.apiKey);
+        Bmob.getInstance().init(appId, apiKey);
 
 
-//        signUp();
-//        saveObject();
-
-//        sendSms();
-//        verifySmsCode();
-//        signUpOrLoginSmsCode();
-
-
-        gets();
+        signUp();
+        saveObject();
+        sendSms();
+        verifySmsCode();
+        signUpOrLoginSmsCode();
 
 
     }
@@ -52,7 +53,7 @@ public class Test {
         //相当于
 
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.get(objectId, new GetListener<BmobUser>() {
+        bmobQuery.getObject(objectId, new GetListener<BmobUser>() {
             @Override
             public void onSuccess(BmobUser user) {
                 System.out.println("user info " + user.getUsername() + "-" + user.getObjectId());
@@ -86,7 +87,6 @@ public class Test {
 
         BmobSms bmobSms = new BmobSms();
         bmobSms.setMobilePhoneNumber("13760289294");
-//        bmobSms.setTemplate("template");
         bmobSms.sendSmsCode(new SendSmsCodeListener() {
             @Override
             public void onSuccess(String smsId) {
@@ -202,7 +202,7 @@ public class Test {
      */
     private static void get(final String objectId) {
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.get(objectId, new GetListener<GameScore>() {
+        bmobQuery.getObject(objectId, new GetListener<GameScore>() {
             @Override
             public void onSuccess(GameScore gameScore) {
                 System.out.println("user：" + gameScore.getPlayerName() + "-" + gameScore.getScore() + gameScore.getObjectId() + "-" + gameScore.getCreatedAt() + "-" + gameScore.getUpdatedAt());
@@ -217,29 +217,6 @@ public class Test {
         });
     }
 
-
-    /**
-     * 获取一条数据
-     */
-    private static void gets() {
-        BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.addWhereEqualTo("score", 10);
-        bmobQuery.getsWhere(new GetsListener<GameScore>() {
-            @Override
-            public void onSuccess(List<GameScore> array) {
-
-
-                System.out.println(array.size() + " gets");
-            }
-
-            @Override
-            public void onFailure(BmobException ex) {
-
-
-                System.err.println(ex.getMessage());
-            }
-        });
-    }
 
     /**
      * 删除一条数据

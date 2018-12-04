@@ -1,56 +1,94 @@
 package cn.bmob.data;
 
-import cn.bmob.data.config.*;
-import cn.bmob.data.api.*;
+import cn.bmob.data.api.BmobApiService;
+import cn.bmob.data.config.BmobConfig;
+import cn.bmob.data.utils.BmobInterceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import cn.bmob.data.utils.*;
+
 import java.util.concurrent.TimeUnit;
 
 public class Bmob {
 
 
+    /**
+     * APP ID
+     */
     private String appId;
+    /**
+     * REST API KEY
+     */
     private String apiKey;
 
 
+
+    /**
+     * @return
+     */
     public String getAppId() {
         return appId;
     }
 
+    /**
+     * @param appId
+     */
     private void setAppId(String appId) {
         this.appId = appId;
     }
 
+    /**
+     * @return
+     */
     public String getApiKey() {
         return apiKey;
     }
 
+    /**
+     * @param apiKey
+     */
     private void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
 
+    /**
+     *
+     */
     private volatile static Bmob INSTANCE;
+    /**
+     *
+     */
     private volatile static BmobApiService mBmobApiService;
 
+    /**
+     *
+     */
     private Bmob() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(HttpConfig.connectionTime, TimeUnit.SECONDS);
-        builder.addInterceptor(InterceptorUtil.headerInterceptor());   // 使用拦截器在request中添加统一header内容
-        if (HttpConfig.debug) {
-            builder.addInterceptor(InterceptorUtil.logInterceptor());   // 添加日志拦截器
+        builder.connectTimeout(BmobConfig.connectionTime, TimeUnit.SECONDS);
+        // 使用拦截器在request中添加统一header内容
+        builder.addInterceptor(BmobInterceptor.headerInterceptor());
+        if (BmobConfig.isDebug()) {
+            // 添加日志拦截器
+            builder.addInterceptor(BmobInterceptor.logInterceptor());
         }
         Retrofit mRetrofit = new Retrofit.Builder()
                 .client(builder.build())
-                .baseUrl(HttpConfig.baseUrl)
-                .addConverterFactory(GsonConverterFactory.create()) // 添加gson转换器
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())   // 添加rxjava转换器
+                .baseUrl(BmobConfig.DEFAULT_REST_API_HOST)
+                // 添加GSON转换器
+                .addConverterFactory(GsonConverterFactory.create())
+                // 添加RxJava转换器
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         mBmobApiService = mRetrofit.create(BmobApiService.class);
     }
 
+
+    /**
+     *
+     * @return
+     */
     public static Bmob getInstance() {
         if (null == INSTANCE) {
             synchronized (Bmob.class) {
@@ -62,6 +100,10 @@ public class Bmob {
         return INSTANCE;
     }
 
+    /**
+     *
+     * @return
+     */
     public BmobApiService api() {
         return mBmobApiService;
     }

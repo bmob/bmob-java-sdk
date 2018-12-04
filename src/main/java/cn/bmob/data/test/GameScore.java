@@ -1,4 +1,4 @@
-package cn.bmob.data;
+package cn.bmob.data.test;
 
 
 import cn.bmob.data.bean.BmobObject;

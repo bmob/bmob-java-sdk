@@ -1,6 +1,7 @@
 package cn.bmob.data.api;
 
 import com.google.gson.JsonObject;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -10,6 +11,7 @@ public interface BmobApiService {
 
 
     //TODO =========================================BmobObject单条数据增删改查=============================================
+
     /**
      * 新增一行数据
      *
@@ -38,6 +40,7 @@ public interface BmobApiService {
 
     /**
      * 更新一条数据
+     *
      * @param tableName
      * @param objectId
      * @param object
@@ -48,39 +51,16 @@ public interface BmobApiService {
 
     /**
      * 查询一条数据
+     *
      * @param tableName
      * @param objectId
      * @return
      */
     @GET("/1/classes/{tableName}/{objectId}")
-    Call<JsonObject> get(@Path("tableName") String tableName, @Path("objectId") String objectId);
-
-
-
-
+    Call<JsonObject> get(@Path("tableName") String tableName, @Path("objectId") String objectId, @QueryMap Map<String, Object> map);
 
     @GET("/1/classes/{tableName}")
-    Call<JsonObject> find(@Path("tableName") String tableName);
-
-    @GET("/1/classes/{tableName}")
-    Call<JsonObject> findWhere(@Path("tableName") String tableName, @Query("where") JsonObject where);
-
-    @GET("/1/classes/{tableName}")
-    Call<JsonObject> find(@Path("tableName") String tableName,
-                          @Query("where") JsonObject where,
-                          @Query("limit") int limit,
-                          @Query("skip") int skip);
-
-    @GET("/1/classes/{tableName}")
-    Call<JsonObject> find(@Path("tableName") String tableName,
-                          @Query("where") JsonObject where,
-                          @Query("limit") int limit,
-                          @Query("skip") int skip,
-                          @Query("order") String order);
-
-    @GET("/1/classes/{tableName}")
-    Call<JsonObject> find(@Path("tableName") String tableName, @QueryMap Map<String, String> options);
-
+    Call<JsonObject> getObjects(@Path("tableName") String tableName, @QueryMap Map<String, Object> map);
 
 
     //TODO =========================================用户=============================================
@@ -95,6 +75,7 @@ public interface BmobApiService {
 
     /**
      * 获取某个用户信息
+     *
      * @param objectId
      * @return
      */
@@ -102,10 +83,9 @@ public interface BmobApiService {
     Call<JsonObject> getUserInfo(@Path("objectId") String objectId);
 
 
-
-
     /**
      * 检查某个用户的登录令牌是否过期
+     *
      * @param objectId
      * @return
      */
@@ -134,6 +114,22 @@ public interface BmobApiService {
      */
     @POST("/1/verifySmsCode/{smsCode}")
     Call<JsonObject> verifySmsCode(@Path("smsCode") String smsCode, @Body Object object);
+
+
+    //TODO ========================================文件=============================================
+
+
+    @POST("/2/files/{fileName}")
+    Call<JsonObject> upload(@Path("fileName") String fileName, @Body RequestBody body);
+
+
+    @DELETE("/2/files/{cdnName}/{url}")
+    Call<JsonObject> delete(@Path("cdnName") String cdnName, @Path("url") String url);
+
+
+
+    @POST("/2/cdnBatchDelete")
+    Call<JsonObject> deleteBatch(@Body Object object);
 
 
 }

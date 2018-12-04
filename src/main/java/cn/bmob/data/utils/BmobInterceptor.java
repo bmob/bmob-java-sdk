@@ -1,20 +1,18 @@
 package cn.bmob.data.utils;
 
 import cn.bmob.data.Bmob;
-import lombok.extern.java.Log;
+import cn.bmob.data.config.BmobConfig;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  * 拦截器工具类
  */
-@Log
-public class InterceptorUtil {
+public class BmobInterceptor {
     /**
      * 在Request中添加Header内容
      *
@@ -25,9 +23,8 @@ public class InterceptorUtil {
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request()
                         .newBuilder()
-                        .addHeader("Content-Type", "application/json; charset=UTF-8")
+                        .addHeader("Content-Type", BmobConfig.getContentType())
                         .addHeader("X-Bmob-Application-Id", Bmob.getInstance().getAppId())
-                        .addHeader("X-Bmob-REST-API-Key", Bmob.getInstance().getApiKey())
                         .addHeader("X-Bmob-REST-API-Key", Bmob.getInstance().getApiKey())
                         .build();
                 return chain.proceed(request);
@@ -45,7 +42,8 @@ public class InterceptorUtil {
         HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
         return new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             public void log(String message) {
-                log.log(Level.INFO, message);
+                HttpLoggingInterceptor.Logger logger = HttpLoggingInterceptor.Logger.DEFAULT;
+                logger.log(message);
             }
         }).setLevel(level);
     }

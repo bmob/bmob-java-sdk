@@ -5,6 +5,8 @@ import cn.bmob.data.callback.base.BmobCallback;
 import cn.bmob.data.callback.base.BmobGetCallback;
 import cn.bmob.data.callback.base.BmobOkCallback;
 import cn.bmob.data.callback.base.BmobSaveCallback;
+import cn.bmob.data.callback.file.UploadFileListener;
+import cn.bmob.data.callback.object.CountListener;
 import cn.bmob.data.callback.object.GetsListener;
 import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;
@@ -21,6 +23,8 @@ import retrofit2.Response;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -167,6 +171,10 @@ public class Utils {
                 ((SendSmsCodeListener) bmobCallback).onSuccess(bmobResponse.getSmsId());
             } else if (bmobCallback instanceof GetsListener) {
                 ((GetsListener) bmobCallback).onSuccess(bmobResponse.getResults());
+            } else if (bmobCallback instanceof CountListener) {
+                ((CountListener) bmobCallback).onSuccess(bmobResponse.getCount());
+            } else if (bmobCallback instanceof UploadFileListener) {
+                ((UploadFileListener) bmobCallback).onSuccess(bmobResponse.getCdn(), bmobResponse.getFilename(), bmobResponse.getUrl());
             }
 
         } else {
@@ -320,5 +328,36 @@ public class Utils {
             jsonArray.add((JsonElement) value);
         }
         return jsonArray;
+    }
+
+
+    /**
+     * @param origin
+     * @param target
+     * @param count
+     * @return
+     */
+    public static int indexOf(String origin, String target, int count) {
+        Pattern pattern = Pattern.compile(target);
+        Matcher findMatcher = pattern.matcher(origin);
+        int number = 0;
+        while (findMatcher.find()) {
+            number++;
+            if (number == count) {
+                break;
+            }
+        }
+        return findMatcher.start();
+    }
+
+
+    /**
+     * 获取域名之后的一段文件地址
+     *
+     * @param url
+     * @return
+     */
+    public static String getTargetUrl(String url) {
+        return url.substring(Utils.indexOf(url, "/", 3) + 1, url.length());
     }
 }

@@ -1,7 +1,7 @@
 package cn.bmob.data.utils;
 
-import cn.bmob.data.bean.BmobACL;
-import cn.bmob.data.bean.BmobRelation;
+import cn.bmob.data.bean.type.BmobACL;
+import cn.bmob.data.bean.type.BmobRelation;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 

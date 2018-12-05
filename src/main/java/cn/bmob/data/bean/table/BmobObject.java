@@ -1,14 +1,20 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.table;
 
 import cn.bmob.data.Bmob;
+import cn.bmob.data.bean.type.BmobACL;
 import cn.bmob.data.callback.object.DeleteListener;
 import cn.bmob.data.callback.object.SaveListener;
 import cn.bmob.data.callback.object.UpdateListener;
+import cn.bmob.data.exception.BmobException;
 import cn.bmob.data.utils.Utils;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.oracle.javafx.jmx.json.JSONException;
 import retrofit2.Call;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static cn.bmob.data.utils.Utils.request;
 
@@ -156,6 +162,18 @@ public class BmobObject implements Serializable {
      * @param saveListener
      */
     public void save(final SaveListener saveListener) {
+
+        if ("_User".equals(tableName)) {
+            saveListener.onFailure(new BmobException("Table _User is not support save operation.", 9015));
+            return;
+        }
+
+        if ("_Article".equals(tableName)) {
+            saveListener.onFailure(new BmobException("Table _Article is not support save operation.", 9015));
+            return;
+        }
+
+
         setObjectId(null);
         setCreatedAt(null);
         setUpdatedAt(null);
@@ -189,4 +207,99 @@ public class BmobObject implements Serializable {
 
 
 
+
+
+
+    //TODO======================================数组操作==================================================
+    /**
+     * 在一个数组字段中添加一个值
+     *
+     * @param key   字段名称(数组类型)
+     * @param value 要添加的值
+     */
+    public void add(String key, Object value) {
+        addAll(key, Arrays.asList(new Object[]{value}));
+    }
+
+    /**
+     * 在一个数组字段中添加多个值
+     *
+     * @param key    字段名称(数组类型)
+     * @param values 要添加的多个值
+     */
+    public void addAll(String key, Collection<?> values) {
+        try {
+            data.add(key, addFieldOperation("Add", values));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 在一个数组字段中添加一个值(只有在原本数组字段中不存在该值的情形下才会添加入数组，插入数组的位置不固定的)
+     *
+     * @param key   字段名称(数组类型)
+     * @param value 要添加的值
+     */
+    public void addUnique(String key, Object value) {
+        addAllUnique(key, Arrays.asList(new Object[]{value}));
+    }
+
+    /**
+     * 在一个数组字段中添加多个值(只会在原本数组字段中不存在这些值的情形下才会添加入数组，插入数组的位置不固定的)
+     *
+     * @param key    字段名称(数组类型)
+     * @param values 要添加的多个值
+     */
+    public void addAllUnique(String key, Collection<?> values) {
+        try {
+            data.add(key, addFieldOperation("AddUnique", values));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 从一个数组字段的值内移除指定的多个值
+     *
+     * @param key    字段名称(数组类型)
+     * @param values 要移除的多个值
+     */
+    public void removeAll(String key, Collection<?> values) {
+        try {
+            data.add(key, addFieldOperation("Remove", values));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 删除一个字段
+     *
+     * @param key 字段名称
+     */
+    public void remove(String key) {
+        JsonObject operation = new JsonObject();
+        operation.addProperty("__op", "Delete");
+        data.add(key, operation);
+    }
+
+
+    /**
+     * 组装操作字段的结构体
+     *
+     * @param type   操作类型
+     * @param values 操作值
+     * @return 返回组装后的结构体
+     */
+    private JsonObject addFieldOperation(String type, Collection<?> values) {
+        JsonObject operation = new JsonObject();
+        operation.addProperty("__op", type);
+        JsonArray array = new JsonArray();
+        for (Object object : values) {
+            Utils.add2Array(array, object);
+        }
+        operation.add("objects", array);
+        return operation;
+    }
 }

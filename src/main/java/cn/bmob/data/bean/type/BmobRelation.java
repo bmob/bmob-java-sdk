@@ -1,4 +1,4 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.type;
 
 import java.io.Serializable;
 import java.util.ArrayList;

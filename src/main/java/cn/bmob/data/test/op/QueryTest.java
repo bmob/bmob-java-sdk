@@ -1,18 +1,20 @@
-package cn.bmob.data.test;
+package cn.bmob.data.test.op;
 
 import cn.bmob.data.Bmob;
-import cn.bmob.data.bean.BmobQuery;
+import cn.bmob.data.bean.op.BmobQuery;
 import cn.bmob.data.callback.object.CountListener;
 import cn.bmob.data.callback.object.GetListener;
 import cn.bmob.data.callback.object.GetsListener;
 import cn.bmob.data.exception.BmobException;
+import cn.bmob.data.test.bean.TestObject;
 
 import java.util.List;
 
+import static cn.bmob.data.test.bean.TestConfig.apiKey;
+import static cn.bmob.data.test.bean.TestConfig.appId;
+
 public class QueryTest {
 
-    public static String appId = "12784168944a56ae41c4575686b7b332";
-    public static String apiKey = "9e8ffb8e0945092d1a6b3562741ae564";
 
 
     public static void main(String[] args) {
@@ -27,8 +29,8 @@ public class QueryTest {
 
     private static void getCount() {
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.setSum("score");
-        bmobQuery.getCount(new CountListener<GameScore>() {
+        bmobQuery.setSum("integer");
+        bmobQuery.getCount(new CountListener<TestObject>() {
             @Override
             public void onSuccess(Integer count) {
                 System.out.println("count "+count);
@@ -44,12 +46,12 @@ public class QueryTest {
 
     private static void getObjects() {
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.addWhereNotEqualTo("score", 10);
-        bmobQuery.setKeys("playerName");
-        bmobQuery.setSum("score");
-        bmobQuery.getObjects(new GetsListener<GameScore>() {
+        bmobQuery.addWhereNotEqualTo("integer", 10);
+        bmobQuery.setKeys("str");
+        bmobQuery.setSum("integer");
+        bmobQuery.getObjects(new GetsListener<TestObject>() {
             @Override
-            public void onSuccess(List<GameScore> array) {
+            public void onSuccess(List<TestObject> array) {
                 System.out.println("size "+array.size());
             }
 
@@ -62,11 +64,11 @@ public class QueryTest {
 
     private static void getObject() {
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.setKeys("playerName");
-        bmobQuery.getObject("f926a9b287", new GetListener<GameScore>() {
+        bmobQuery.setKeys("str");
+        bmobQuery.getObject("f926a9b287", new GetListener<TestObject>() {
             @Override
-            public void onSuccess(GameScore object) {
-                System.out.println(object.getPlayerName());
+            public void onSuccess(TestObject object) {
+                System.out.println(object.getStr());
             }
 
             @Override

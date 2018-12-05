@@ -1,4 +1,4 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.op;
 
 import cn.bmob.data.Bmob;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;

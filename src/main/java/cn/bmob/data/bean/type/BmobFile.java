@@ -1,4 +1,4 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.type;
 
 import cn.bmob.data.Bmob;
 import cn.bmob.data.callback.file.DeleteFileBatchListener;
@@ -17,48 +17,98 @@ import java.io.File;
 public class BmobFile {
 
 
+    /**
+     * CDN名称
+     */
     private String cdnName;
 
+    /**
+     * 文件URL
+     */
     private String url;
 
+
+    /**
+     * 文件名称
+     */
     private String fileName;
 
 
+    /**
+     * 本地文件
+     */
     private File file;
 
+    /**
+     *
+     * @param file
+     */
     public BmobFile(File file) {
         this.file = file;
     }
 
 
+    /**
+     *
+     * @return
+     */
     public String getCdnName() {
         return cdnName;
     }
 
+    /**
+     *
+     * @param cdnName
+     */
     public void setCdnName(String cdnName) {
         this.cdnName = cdnName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     *
+     * @param url
+     */
     public void setUrl(String url) {
         this.url = url;
     }
 
+
+    /**
+     *
+     * @return
+     */
     public String getFileName() {
         return fileName;
     }
 
+    /**
+     *
+     * @param fileName
+     */
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
+    /**
+     *
+     * @return
+     */
     public File getFile() {
         return file;
     }
 
+    /**
+     *
+     * @param file
+     */
     public void setFile(File file) {
         this.file = file;
     }

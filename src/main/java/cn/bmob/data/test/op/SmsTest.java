@@ -1,9 +1,9 @@
-package cn.bmob.data.test;
+package cn.bmob.data.test.op;
 
 import cn.bmob.data.Bmob;
-import cn.bmob.data.bean.BmobQuery;
-import cn.bmob.data.bean.BmobSms;
-import cn.bmob.data.bean.BmobUser;
+import cn.bmob.data.bean.op.BmobQuery;
+import cn.bmob.data.bean.op.BmobSms;
+import cn.bmob.data.bean.table.BmobUser;
 import cn.bmob.data.callback.object.DeleteListener;
 import cn.bmob.data.callback.object.GetListener;
 import cn.bmob.data.callback.object.SaveListener;
@@ -14,12 +14,14 @@ import cn.bmob.data.callback.user.LoginListener;
 import cn.bmob.data.callback.user.SignUpListener;
 import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
 import cn.bmob.data.exception.BmobException;
+import cn.bmob.data.test.bean.TestObject;
+
+import static cn.bmob.data.test.bean.TestConfig.apiKey;
+import static cn.bmob.data.test.bean.TestConfig.appId;
 
 public class SmsTest {
 
 
-    public static String appId = "12784168944a56ae41c4575686b7b332";
-    public static String apiKey = "9e8ffb8e0945092d1a6b3562741ae564";
 
 
     public static void main(String[] args) {
@@ -177,11 +179,11 @@ public class SmsTest {
      * 新增一条数据
      */
     private static void saveObject() {
-        GameScore gameScore = new GameScore();
-        gameScore.setCheatMode(false);
-        gameScore.setPlayerName("michael");
-        gameScore.setScore(100);
-        gameScore.save(new SaveListener() {
+        TestObject testObject = new TestObject();
+        testObject.setBoo(false);
+        testObject.setStr("michael");
+        testObject.setInteger(100);
+        testObject.save(new SaveListener() {
             @Override
             public void onSuccess(String objectId, String createdAt) {
                 System.out.println("save：" + objectId + "-" + createdAt);
@@ -202,10 +204,10 @@ public class SmsTest {
      */
     private static void get(final String objectId) {
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.getObject(objectId, new GetListener<GameScore>() {
+        bmobQuery.getObject(objectId, new GetListener<TestObject>() {
             @Override
-            public void onSuccess(GameScore gameScore) {
-                System.out.println("user：" + gameScore.getPlayerName() + "-" + gameScore.getScore() + gameScore.getObjectId() + "-" + gameScore.getCreatedAt() + "-" + gameScore.getUpdatedAt());
+            public void onSuccess(TestObject testObject) {
+                System.out.println("user：" + testObject.getStr() + "-" + testObject.getInteger() + testObject.getObjectId() + "-" + testObject.getCreatedAt() + "-" + testObject.getUpdatedAt());
 
                 delete(objectId);
             }
@@ -224,9 +226,9 @@ public class SmsTest {
      * @param objectId
      */
     private static void delete(String objectId) {
-        GameScore gameScore = new GameScore();
-        gameScore.setObjectId(objectId);
-        gameScore.delete(new DeleteListener() {
+        TestObject testObject = new TestObject();
+        testObject.setObjectId(objectId);
+        testObject.delete(new DeleteListener() {
             @Override
             public void onSuccess(String msg) {
                 System.out.println("delete： " + msg);
@@ -246,10 +248,10 @@ public class SmsTest {
      * @param objectId
      */
     private static void update(final String objectId) {
-        GameScore gameScore = new GameScore();
-        gameScore.setObjectId(objectId);
-        gameScore.setPlayerName("jenny");
-        gameScore.update(new UpdateListener() {
+        TestObject testObject = new TestObject();
+        testObject.setObjectId(objectId);
+        testObject.setStr("jenny");
+        testObject.update(new UpdateListener() {
             @Override
             public void onSuccess(String updatedAt) {
                 System.out.println("update：" + "-" + updatedAt);

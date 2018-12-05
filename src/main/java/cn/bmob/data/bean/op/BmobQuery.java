@@ -1,6 +1,11 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.op;
 
 import cn.bmob.data.Bmob;
+import cn.bmob.data.bean.table.BmobObject;
+import cn.bmob.data.bean.table.BmobUser;
+import cn.bmob.data.bean.type.BmobDate;
+import cn.bmob.data.bean.type.BmobGeoPoint;
+import cn.bmob.data.bean.type.BmobPointer;
 import cn.bmob.data.callback.object.CountListener;
 import cn.bmob.data.callback.object.GetListener;
 import cn.bmob.data.callback.object.GetsListener;

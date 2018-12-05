@@ -1,4 +1,4 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.table;
 
 import cn.bmob.data.Bmob;
 import cn.bmob.data.callback.object.GetListener;

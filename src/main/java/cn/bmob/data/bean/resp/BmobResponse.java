@@ -1,4 +1,4 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.resp;
 
 import java.util.List;
 

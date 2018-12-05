@@ -1,5 +1,7 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.type;
 
+import cn.bmob.data.bean.table.BmobRole;
+import cn.bmob.data.bean.table.BmobUser;
 import cn.bmob.data.utils.Utils;
 
 import java.util.HashMap;

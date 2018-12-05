@@ -1,6 +1,7 @@
 package cn.bmob.data.utils;
 
-import cn.bmob.data.bean.*;
+import cn.bmob.data.bean.resp.BmobResponse;
+import cn.bmob.data.bean.table.*;
 import cn.bmob.data.callback.base.BmobCallback;
 import cn.bmob.data.callback.base.BmobGetCallback;
 import cn.bmob.data.callback.base.BmobOkCallback;

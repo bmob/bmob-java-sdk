@@ -1,4 +1,4 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.type;
 
 import cn.bmob.data.utils.Utils;
 

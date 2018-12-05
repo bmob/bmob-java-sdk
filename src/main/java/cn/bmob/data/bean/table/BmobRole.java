@@ -1,4 +1,6 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.table;
+
+import cn.bmob.data.bean.type.BmobRelation;
 
 public class BmobRole extends BmobObject {
 

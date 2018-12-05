@@ -1,5 +1,6 @@
-package cn.bmob.data.bean;
+package cn.bmob.data.bean.type;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.Date;
 /**
  * bmob时间类型
  */
-public class BmobDate extends BmobObject {
+public class BmobDate implements Serializable {
     private String iso;
     private String __type = "Date";
 

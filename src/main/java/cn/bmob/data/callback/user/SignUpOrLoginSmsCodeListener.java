@@ -1,6 +1,6 @@
 package cn.bmob.data.callback.user;
 
-import cn.bmob.data.bean.BmobUser;
+import cn.bmob.data.bean.table.BmobUser;
 import cn.bmob.data.callback.base.BmobGetCallback;
 
 public abstract class SignUpOrLoginSmsCodeListener<T extends BmobUser> extends BmobGetCallback<T> {

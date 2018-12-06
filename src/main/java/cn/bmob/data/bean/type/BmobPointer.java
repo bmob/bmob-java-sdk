@@ -28,7 +28,7 @@ public class BmobPointer implements Serializable {
      */
     public BmobPointer(Object value) {
         setClassName(Utils.getTableNameFromObject(value));
-        setClassName(Utils.getObjectIdFromObject(value));
+        setObjectId(Utils.getObjectIdFromObject(value));
     }
 
     private String get__type() {

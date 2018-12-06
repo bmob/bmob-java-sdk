@@ -1,7 +1,10 @@
 package cn.bmob.data.utils;
 
 import cn.bmob.data.bean.resp.BmobResponse;
-import cn.bmob.data.bean.table.*;
+import cn.bmob.data.bean.table.BmobArticle;
+import cn.bmob.data.bean.table.BmobObject;
+import cn.bmob.data.bean.table.BmobRole;
+import cn.bmob.data.bean.table.BmobUser;
 import cn.bmob.data.callback.base.BmobCallback;
 import cn.bmob.data.callback.base.BmobGetCallback;
 import cn.bmob.data.callback.base.BmobOkCallback;
@@ -14,16 +17,16 @@ import cn.bmob.data.callback.sms.SendSmsCodeListener;
 import cn.bmob.data.callback.user.LoginListener;
 import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
 import cn.bmob.data.exception.BmobException;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -236,6 +239,51 @@ public class Utils {
 
 
     /**
+     *
+     * @param jsonObject
+     * @param data
+     */
+    public static void getDataObject(JsonObject jsonObject,JsonObject data) {
+        if (data.size() > 0) {
+            Set<Map.Entry<String, JsonElement>> entrySet = data.entrySet();
+            Iterator<Map.Entry<String, JsonElement>> iterator = entrySet.iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, JsonElement> entry = iterator.next();
+                String key = entry.getKey();
+                JsonElement jsonElement = entry.getValue();
+                jsonObject.add(key, jsonElement);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param object
+     * @return
+     */
+    public static JsonObject getJsonObjectFromObject(Object object) {
+        String json = GsonUtil.toJson(object);
+        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+        return jsonObject;
+    }
+
+
+    /**
+     *
+     * @param bmobObject
+     * @param data
+     * @return
+     */
+    public static JsonObject getJsonObjectRequest(BmobObject bmobObject,JsonObject data){
+        JsonObject jsonObject = Utils.getJsonObjectFromObject(Utils.removeEssentialAttribute(bmobObject));
+        Utils.getDataObject(jsonObject,data);
+        return jsonObject;
+    }
+
+
+
+
+    /**
      * @param className
      * @return
      */
@@ -263,8 +311,6 @@ public class Utils {
             return "_Role";
         } else if (object instanceof BmobArticle) {
             return "_Article";
-        } else if (object instanceof BmobInstallation) {
-            return "_Installation";
         } else if (object instanceof BmobObject) {
             BmobObject bmobObject = (BmobObject) object;
             return bmobObject.getClass().getSimpleName();

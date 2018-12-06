@@ -22,7 +22,10 @@ import static cn.bmob.data.utils.Utils.request;
 public class BmobObject implements Serializable {
 
 
-    private JsonObject data;
+    /**
+     * 额外数据，对字段的操作
+     */
+    public static transient JsonObject data;
 
     /**
      * 表名
@@ -78,14 +81,6 @@ public class BmobObject implements Serializable {
     }
 
 
-    public JsonObject getData() {
-        return data;
-    }
-
-    public void setData(JsonObject data) {
-        this.data = data;
-    }
-
     /**
      * @return
      */
@@ -130,87 +125,46 @@ public class BmobObject implements Serializable {
     }
 
 
+    /**
+     *
+     * @return
+     */
     public String getTableName() {
         return tableName;
     }
 
+
+    /**
+     *
+     * @param tableName
+     */
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
 
+
+    /**
+     *
+     * @return
+     */
     public String getClassName() {
         return className;
     }
 
+
+    /**
+     *
+     * @param className
+     */
     public void setClassName(String className) {
         this.className = className;
     }
 
-    /**
-     * 更新一行数据
-     *
-     * @param updateListener
-     */
-    public void update(final UpdateListener updateListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().update(tableName, objectId, Utils.removeEssentialAttribute(this));
-        request(call, updateListener);
-    }
-
-    /**
-     * 保存一行数据
-     *
-     * @param saveListener
-     */
-    public void save(final SaveListener saveListener) {
-
-        if ("_User".equals(tableName)) {
-            saveListener.onFailure(new BmobException("Table _User is not support save operation.", 9015));
-            return;
-        }
-
-        if ("_Article".equals(tableName)) {
-            saveListener.onFailure(new BmobException("Table _Article is not support save operation.", 9015));
-            return;
-        }
-
-
-        setObjectId(null);
-        setCreatedAt(null);
-        setUpdatedAt(null);
-        Call<JsonObject> call = Bmob.getInstance().api().insert(tableName, Utils.removeEssentialAttribute(this));
-        request(call, saveListener);
-    }
-
-    /**
-     * 删除一行数据
-     *
-     * @param deleteListener
-     */
-    public void delete(final DeleteListener deleteListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().deleteRow(tableName, objectId);
-        request(call, deleteListener);
-    }
-
-
-    /**
-     * 子类是泛型的类型强转：父类转为子类
-     *
-     * @param object
-     * @param clazz
-     * @param <T>
-     * @return
-     */
-    protected static <T extends BmobObject> T bmobObjectCastSubClass(BmobObject object, Class<T> clazz) {
-        return (T) object;
-    }
 
 
 
+    //TODO======================================数组字段操作==================================================
 
-
-
-
-    //TODO======================================数组操作==================================================
     /**
      * 在一个数组字段中添加一个值
      *
@@ -279,11 +233,20 @@ public class BmobObject implements Serializable {
      * @param key 字段名称
      */
     public void remove(String key) {
-        JsonObject operation = new JsonObject();
-        operation.addProperty("__op", "Delete");
-        data.add(key, operation);
+        JsonObject delete = new JsonObject();
+        delete.addProperty("__op", "Delete");
+        data.add(key, delete);
     }
 
+
+    /**
+     * 删除一个字段
+     * @param key 字段名称
+     * @param value 值
+     */
+    public void remove(String key,Object value) {
+        removeAll(key, Arrays.asList(new Object[]{value}));
+    }
 
     /**
      * 组装操作字段的结构体
@@ -302,4 +265,98 @@ public class BmobObject implements Serializable {
         operation.add("objects", array);
         return operation;
     }
+
+
+    //TODO================================================自增字段操作=======================================
+
+    /**
+     * 给指定的字段自增1
+     *
+     * @param key 要增量的字段名
+     */
+    public void increment(String key) {
+        increment(key, 1);
+    }
+
+
+    /**
+     * 给指定的字段自动增加指定的数量，如果需要自减则取负值
+     *
+     * @param key    要增量的字段名
+     * @param amount 要增量的数字
+     */
+    public void increment(String key, Number amount) {
+        JsonObject increment = new JsonObject();
+        try {
+            increment.addProperty("__op", "Increment");
+            increment.addProperty("amount", amount);
+            data.add(key, increment);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    //TODO=======================================================数据操作==============================================
+    /**
+     * 更新一行数据
+     *
+     * @param updateListener
+     */
+    public void update(final UpdateListener updateListener) {
+
+
+
+        Call<JsonObject> call = Bmob.getInstance().api().update(tableName, objectId, Utils.getJsonObjectRequest(this,data));
+        request(call, updateListener);
+    }
+
+
+
+    /**
+     * 保存一行数据
+     *
+     * @param saveListener
+     */
+    public void save(final SaveListener saveListener) {
+
+        if ("_User".equals(tableName)) {
+            saveListener.onFailure(new BmobException("Table _User is not support save operation.", 9015));
+            return;
+        }
+
+        if ("_Article".equals(tableName)) {
+            saveListener.onFailure(new BmobException("Table _Article is not support save operation.", 9015));
+            return;
+        }
+
+
+        Call<JsonObject> call = Bmob.getInstance().api().insert(tableName, Utils.getJsonObjectRequest(this,data));
+        request(call, saveListener);
+    }
+
+    /**
+     * 删除一行数据
+     *
+     * @param deleteListener
+     */
+    public void delete(final DeleteListener deleteListener) {
+        Call<JsonObject> call = Bmob.getInstance().api().deleteRow(tableName, objectId);
+        request(call, deleteListener);
+    }
+
+
+    /**
+     * 子类是泛型的类型强转：父类转为子类
+     *
+     * @param object
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    protected static <T extends BmobObject> T bmobObjectCastSubClass(BmobObject object, Class<T> clazz) {
+        return (T) object;
+    }
+
 }

@@ -16,11 +16,11 @@ public interface BmobApiService {
      * 新增一行数据
      *
      * @param tableName
-     * @param object
+     * @param jsonObject
      * @return
      */
     @POST("/1/classes/{tableName}")
-    Call<JsonObject> insert(@Path("tableName") String tableName, @Body Object object);
+    Call<JsonObject> insert(@Path("tableName") String tableName, @Body JsonObject jsonObject);
 
 
     /**
@@ -43,11 +43,11 @@ public interface BmobApiService {
      *
      * @param tableName
      * @param objectId
-     * @param object
+     * @param jsonObject
      * @return
      */
     @PUT("/1/classes/{tableName}/{objectId}")
-    Call<JsonObject> update(@Path("tableName") String tableName, @Path("objectId") String objectId, @Body Object object);
+    Call<JsonObject> update(@Path("tableName") String tableName, @Path("objectId") String objectId, @Body JsonObject jsonObject);
 
     /**
      * 查询一条数据
@@ -66,7 +66,7 @@ public interface BmobApiService {
     //TODO =========================================用户=============================================
 
     @POST("/1/users")
-    Call<JsonObject> signUp(@Body Object object);
+    Call<JsonObject> signUp(@Body JsonObject jsonObject);
 
 
     @GET("/1/login")
@@ -129,7 +129,7 @@ public interface BmobApiService {
 
 
     @POST("/2/cdnBatchDelete")
-    Call<JsonObject> deleteBatch(@Body Object object);
+    Call<JsonObject> deleteBatch(@Body JsonObject jsonObject);
 
 
 }

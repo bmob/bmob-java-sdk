@@ -4,22 +4,24 @@ import cn.bmob.data.bean.type.BmobRelation;
 
 public class BmobRole extends BmobObject {
 
-    public static String tableName = "_Role";
-    protected String name;
+    /**
+     * 角色名称
+     */
+    private String name;
+    /**
+     * 角色的子角色
+     */
     private BmobRelation roles = new BmobRelation();
+    /**
+     * 角色的用户
+     */
     private BmobRelation users = new BmobRelation();
-
-    @Override
-    public String getTableName() {
-        return "_Role";
-    }
 
     /**
      * 创建角色
-     * @param name 角色名称
      */
-    public BmobRole(String name){
-        setName(name);
+    public BmobRole(){
+        super("_Role");
     }
 
     /**

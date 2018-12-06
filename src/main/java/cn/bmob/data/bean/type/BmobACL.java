@@ -9,12 +9,8 @@ import java.util.Map;
 
 public class BmobACL  {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 3706778250022037535L;
 
-    private Map<String, Object> acl = new HashMap<String, Object>();
+    private Map<String, Object> acl = new HashMap<>();
 
     private static final String READ = "read";
     private static final String WRITE = "write";

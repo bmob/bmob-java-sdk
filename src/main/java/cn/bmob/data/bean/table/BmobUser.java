@@ -137,7 +137,7 @@ public class BmobUser extends BmobObject {
      * @param signUpListener
      */
     public void signUp(final SignUpListener signUpListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().signUp(Utils.removeEssentialAttribute(this));
+        Call<JsonObject> call = Bmob.getInstance().api().signUp(Utils.getJsonObjectRequest(this,data));
         request(call, signUpListener);
     }
 
@@ -154,7 +154,8 @@ public class BmobUser extends BmobObject {
             signUpOrLoginSmsCodeListener.onFailure(new BmobException("Please input smsCode first.", 9015));
             return;
         }
-        Call<JsonObject> call = Bmob.getInstance().api().signUp(Utils.removeEssentialAttribute(this));
+
+        Call<JsonObject> call = Bmob.getInstance().api().signUp(Utils.getJsonObjectRequest(this,data));
         request(call, signUpOrLoginSmsCodeListener);
     }
 

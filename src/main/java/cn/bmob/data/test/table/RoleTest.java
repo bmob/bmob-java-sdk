@@ -13,9 +13,7 @@ public class RoleTest {
 
     public static void main(String[] args) {
         //TODO Application Entrance
-
         Bmob.getInstance().init(TestConfig.appId, TestConfig.apiKey);
-
 
         BmobUser bmobUser = new BmobUser();
         bmobUser.setUsername("username");
@@ -24,8 +22,6 @@ public class RoleTest {
             @Override
             public void onSuccess(BmobUser user) {
                 System.out.println(user.getUsername());
-
-
                 BmobRole bmobRole = new BmobRole();
                 //TODO Role names must be restricted to alphanumeric characters, dashes(-), underscores(_), and spaces.
                 bmobRole.setName("role-name");
@@ -48,8 +44,5 @@ public class RoleTest {
                 System.err.println(ex.getMessage());
             }
         });
-
-
-
     }
 }

@@ -4,17 +4,13 @@ import cn.bmob.data.Bmob;
 import cn.bmob.data.bean.op.BmobQuery;
 import cn.bmob.data.bean.op.BmobSms;
 import cn.bmob.data.bean.table.BmobUser;
-import cn.bmob.data.callback.object.DeleteListener;
 import cn.bmob.data.callback.object.GetListener;
-import cn.bmob.data.callback.object.SaveListener;
-import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;
 import cn.bmob.data.callback.sms.VerifySmsCodeListener;
 import cn.bmob.data.callback.user.LoginListener;
 import cn.bmob.data.callback.user.SignUpListener;
 import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
 import cn.bmob.data.exception.BmobException;
-import cn.bmob.data.test.bean.TestObject;
 
 import static cn.bmob.data.test.bean.TestConfig.apiKey;
 import static cn.bmob.data.test.bean.TestConfig.appId;
@@ -32,7 +28,6 @@ public class SmsTest {
 
 
         signUp();
-        saveObject();
         sendSms();
         verifySmsCode();
         signUpOrLoginSmsCode();
@@ -175,93 +170,5 @@ public class SmsTest {
     }
 
 
-    /**
-     * 新增一条数据
-     */
-    private static void saveObject() {
-        TestObject testObject = new TestObject();
-        testObject.setBoo(false);
-        testObject.setStr("michael");
-        testObject.setInteger(100);
-        testObject.save(new SaveListener() {
-            @Override
-            public void onSuccess(String objectId, String createdAt) {
-                System.out.println("save：" + objectId + "-" + createdAt);
-                update(objectId);
-            }
 
-            @Override
-            public void onFailure(BmobException ex) {
-                System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
-            }
-        });
-    }
-
-    /**
-     * 获取一条数据
-     *
-     * @param objectId
-     */
-    private static void get(final String objectId) {
-        BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.getObject(objectId, new GetListener<TestObject>() {
-            @Override
-            public void onSuccess(TestObject testObject) {
-                System.out.println("user：" + testObject.getStr() + "-" + testObject.getInteger() + testObject.getObjectId() + "-" + testObject.getCreatedAt() + "-" + testObject.getUpdatedAt());
-
-                delete(objectId);
-            }
-
-            @Override
-            public void onFailure(BmobException ex) {
-                System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
-            }
-        });
-    }
-
-
-    /**
-     * 删除一条数据
-     *
-     * @param objectId
-     */
-    private static void delete(String objectId) {
-        TestObject testObject = new TestObject();
-        testObject.setObjectId(objectId);
-        testObject.delete(new DeleteListener() {
-            @Override
-            public void onSuccess(String msg) {
-                System.out.println("delete： " + msg);
-            }
-
-            @Override
-            public void onFailure(BmobException ex) {
-                System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
-            }
-        });
-    }
-
-
-    /**
-     * 更新一条数据
-     *
-     * @param objectId
-     */
-    private static void update(final String objectId) {
-        TestObject testObject = new TestObject();
-        testObject.setObjectId(objectId);
-        testObject.setStr("jenny");
-        testObject.update(new UpdateListener() {
-            @Override
-            public void onSuccess(String updatedAt) {
-                System.out.println("update：" + "-" + updatedAt);
-                get(objectId);
-            }
-
-            @Override
-            public void onFailure(BmobException ex) {
-                System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
-            }
-        });
-    }
 }

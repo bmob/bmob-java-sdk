@@ -4,6 +4,7 @@ import cn.bmob.data.Bmob;
 import cn.bmob.data.callback.file.DeleteFileBatchListener;
 import cn.bmob.data.callback.file.DeleteFileListener;
 import cn.bmob.data.callback.file.UploadFileListener;
+import cn.bmob.data.callback.file.UploadListener;
 import cn.bmob.data.exception.BmobException;
 import cn.bmob.data.utils.Utils;
 import com.google.gson.JsonArray;
@@ -16,6 +17,8 @@ import java.io.File;
 
 public class BmobFile {
 
+
+    private String __type = "File";
 
     /**
      * CDN名称
@@ -31,7 +34,7 @@ public class BmobFile {
     /**
      * 文件名称
      */
-    private String fileName;
+    private String filename;
 
 
     /**
@@ -40,7 +43,6 @@ public class BmobFile {
     private File file;
 
     /**
-     *
      * @param file
      */
     public BmobFile(File file) {
@@ -49,7 +51,6 @@ public class BmobFile {
 
 
     /**
-     *
      * @return
      */
     public String getCdnName() {
@@ -57,7 +58,6 @@ public class BmobFile {
     }
 
     /**
-     *
      * @param cdnName
      */
     public void setCdnName(String cdnName) {
@@ -65,7 +65,6 @@ public class BmobFile {
     }
 
     /**
-     *
      * @return
      */
     public String getUrl() {
@@ -73,7 +72,6 @@ public class BmobFile {
     }
 
     /**
-     *
      * @param url
      */
     public void setUrl(String url) {
@@ -81,44 +79,28 @@ public class BmobFile {
     }
 
 
-    /**
-     *
-     * @return
-     */
-    public String getFileName() {
-        return fileName;
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     /**
-     *
-     * @param fileName
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    /**
-     *
      * @return
      */
     public File getFile() {
         return file;
     }
 
-    /**
-     *
-     * @param file
-     */
-    public void setFile(File file) {
-        this.file = file;
-    }
 
     /**
-     *
      * 上传一个文件
+     *
      * @param uploadFileListener
      */
-    public void uploadFile(UploadFileListener uploadFileListener) {
+    private void uploadFile(UploadFileListener uploadFileListener) {
         if (file == null) {
             uploadFileListener.onFailure(new BmobException("Please create BmobFile first.", 9015));
             return;
@@ -126,11 +108,33 @@ public class BmobFile {
         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         Call<JsonObject> call = Bmob.getInstance().api().upload(file.getName(), requestBody);
         Utils.request(call, uploadFileListener);
+
+    }
+
+    /**
+     * @param uploadListener
+     */
+    public void uploadFile(final UploadListener uploadListener) {
+        uploadFile(new UploadFileListener() {
+            @Override
+            public void onFailure(BmobException ex) {
+                uploadListener.onFailure(ex);
+            }
+
+            @Override
+            public void onSuccess(String cdnName, String filename, String url) {
+                setCdnName(cdnName);
+                setFilename(filename);
+                setUrl(url);
+                uploadListener.onSuccess();
+            }
+        });
     }
 
 
     /**
      * 删除一个文件
+     *
      * @param deleteFileListener
      */
     public void deleteFile(DeleteFileListener deleteFileListener) {
@@ -140,19 +144,19 @@ public class BmobFile {
     }
 
 
-
     /**
      * 删除一个文件
+     *
      * @param deleteFileBatchListener
      */
-    public void deleteFileBatch(String cdnName,String[] urls,DeleteFileBatchListener deleteFileBatchListener) {
+    public void deleteFileBatch(String cdnName, String[] urls, DeleteFileBatchListener deleteFileBatchListener) {
         System.out.println(Utils.getTargetUrl(getUrl()));
         JsonObject jsonObject = new JsonObject();
         JsonArray jsonArray = new JsonArray();
-        for (int i=0;i<urls.length;i++){
+        for (int i = 0; i < urls.length; i++) {
             jsonArray.add(Utils.getTargetUrl(urls[i]));
         }
-        jsonObject.add(cdnName,jsonArray);
+        jsonObject.add(cdnName, jsonArray);
         Call<JsonObject> call = Bmob.getInstance().api().deleteBatch(jsonObject);
         Utils.request(call, deleteFileBatchListener);
     }

@@ -234,7 +234,7 @@ public class BmobUser extends BmobObject {
      * @return
      */
     public boolean isLogin() {
-        return Utils.isStringEmpty(getCurrUser());
+        return !Utils.isStringEmpty(getCurrUser());
     }
 
 

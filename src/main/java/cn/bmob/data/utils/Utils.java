@@ -18,11 +18,13 @@ import cn.bmob.data.callback.user.LoginListener;
 import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
 import cn.bmob.data.exception.BmobException;
 import com.google.gson.*;
+import com.oracle.javafx.jmx.json.JSONException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.Iterator;
 import java.util.Map;
@@ -258,14 +260,61 @@ public class Utils {
 
     /**
      *
-     * @param object
+     * @param bmobObject
      * @return
      */
-    public static JsonObject getJsonObjectFromObject(Object object) {
-        String json = GsonUtil.toJson(object);
+    public static JsonObject getJsonObjectFromObject(BmobObject bmobObject) {
+        String json = GsonUtil.toJson(bmobObject);
         JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+        jsonObject = disposePointerType(bmobObject,jsonObject);
         return jsonObject;
     }
+
+
+
+    /**
+     * 处理Pointer类型
+     *
+     * @param jsonObject
+     * @return JSONObject
+     * @throws JSONException
+     */
+    public static JsonObject disposePointerType(BmobObject bmobObject, JsonObject jsonObject) throws JSONException {
+        Field[] fields = bmobObject.getClass().getDeclaredFields();
+        for (Field f : fields) {
+            if (BmobUser.class.isAssignableFrom(f.getType())) {
+
+                if (jsonObject.get(f.getName())!=null) {
+                    JsonObject obj = new JsonObject();
+                    obj.addProperty("__type", "Pointer");
+                    obj.addProperty("objectId", jsonObject.get(f.getName()).getAsJsonObject().get("objectId").getAsString());
+                    obj.addProperty("className", "_User");
+                    jsonObject.add(f.getName(), obj);
+                }
+                continue;
+            } else if (BmobRole.class.isAssignableFrom(f.getType())) {
+                if (jsonObject.get(f.getName())!=null) {
+                    JsonObject obj = new JsonObject();
+                    obj.addProperty("__type", "Pointer");
+                    obj.addProperty("objectId", jsonObject.get(f.getName()).getAsJsonObject().get("objectId").getAsString());
+                    obj.addProperty("className", "_Role");
+                    jsonObject.add(f.getName(), obj);
+                }
+                continue;
+            } else if (BmobObject.class.isAssignableFrom(f.getType())) {
+                if (jsonObject.get(f.getName())!=null) {
+                    JsonObject obj = new JsonObject();
+                    obj.addProperty("__type", "Pointer");
+                    obj.addProperty("objectId", jsonObject.get(f.getName()).getAsJsonObject().get("objectId").getAsString());
+                    obj.addProperty("className", f.getType().getSimpleName());
+                    jsonObject.add(f.getName(), obj);
+                }
+            }
+        }
+        return jsonObject;
+    }
+
+
 
 
     /**

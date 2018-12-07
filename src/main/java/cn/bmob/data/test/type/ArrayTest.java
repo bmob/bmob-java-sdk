@@ -23,9 +23,7 @@ public class ArrayTest {
 
         Bmob.getInstance().init(TestConfig.appId, TestConfig.apiKey);
 
-
         saveArray();
-
 
     }
 

@@ -14,10 +14,7 @@ import cn.bmob.data.callback.object.CountListener;
 import cn.bmob.data.callback.object.GetsListener;
 import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;
-import cn.bmob.data.callback.user.LoginListener;
-import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
-import cn.bmob.data.callback.user.ThirdBindListener;
-import cn.bmob.data.callback.user.ThirdUnBindListener;
+import cn.bmob.data.callback.user.*;
 import cn.bmob.data.exception.BmobException;
 import com.google.gson.*;
 import com.oracle.javafx.jmx.json.JSONException;
@@ -183,7 +180,7 @@ public class Utils {
             //操作成功
             if (bmobCallback instanceof BmobGetCallback) {
                 //登录、短信验证码一键注册或登录
-                if (bmobCallback instanceof LoginListener || bmobCallback instanceof SignUpOrLoginSmsCodeListener) {
+                if (bmobCallback instanceof LoginListener || bmobCallback instanceof SignUpOrLoginSmsCodeListener || bmobCallback instanceof ThirdLoginListener) {
                     //TODO 保存user的json信息到本地，还是内存中？B/S系统怎么存？C/S系统怎么存？
 
                     String json = Utils.getJsonFromResponse(response);

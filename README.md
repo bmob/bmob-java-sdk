@@ -616,11 +616,12 @@ private static void resetPasswordByOldPassword(String oldPassword, String newPas
  * 登录
  */
 private static void login() {
-    BmobUser.loginQQ("", "", "", new ThirdLoginListener() {
+    BmobUser.loginQQ("", "", "", new ThirdLoginListener<TestUser>() {
         @Override
-        public void onSuccess() {
-            System.out.println();
+        public void onSuccess(TestUser user) {
+            System.out.println(user.getObjectId());
         }
+
 
         @Override
         public void onFailure(BmobException ex) {
@@ -628,7 +629,6 @@ private static void login() {
         }
     });
 }
-
 ```
 
 ### 已有用户与第三方绑定

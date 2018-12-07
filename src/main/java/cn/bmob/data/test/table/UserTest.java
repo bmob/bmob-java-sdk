@@ -363,11 +363,12 @@ public class UserTest {
      * 登录
      */
     private static void login() {
-        BmobUser.loginQQ("", "", "", new ThirdLoginListener() {
+        BmobUser.loginQQ("", "", "", new ThirdLoginListener<TestUser>() {
             @Override
-            public void onSuccess() {
-                System.out.println();
+            public void onSuccess(TestUser user) {
+                System.out.println(user.getObjectId());
             }
+
 
             @Override
             public void onFailure(BmobException ex) {

@@ -506,11 +506,107 @@ private static void getUsers(){
     });
 }
 ```
-## 邮箱重置密码
+## 用户邮箱验证
 
+```
+/**
+ * 发送验证用户邮箱的邮件
+ *
+ * @param email
+ */
+private static void sendEmailForVerifyUserEmail(String email) {
+
+    BmobUser.sendEmailForVerifyUserEmail(email, new SendEmailListener() {
+        @Override
+        public void onSuccess(String msg) {
+            System.out.println(msg);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+## 邮箱重置密码
+1、发送重置密码的邮件后，在邮件中进行密码的重置。
+```
+/**
+ * 发送重置密码的邮件
+ *
+ * @param email
+ */
+private static void sendEmailForResetPassword(String email) {
+
+    BmobUser.sendEmailForResetPassword(email, new SendEmailListener() {
+        @Override
+        public void onSuccess(String msg) {
+            System.out.println(msg);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
 ## 手机短信验证码重置密码
 
+1、发送短信验证码，见文档短信验证的发送短信验证码。
+2、验证手机短信验证码后重置密码。
+
+```
+/**
+ * 短信验证码重置密码
+ *
+ * @param smsCode
+ * @param newPassword
+ */
+private static void resetPasswordBySmsCode(String smsCode, String newPassword) {
+    BmobUser.resetPasswordBySmsCode(smsCode, newPassword, new ResetPasswordListener() {
+        @Override
+        public void onSuccess(String msg) {
+            System.out.println(msg);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+
 ## 旧密码重置密码
+1、旧密码重置密码，需要登录。
+```
+/**
+ * 旧密码重置密码，需要登录
+ *
+ * @param oldPassword
+ * @param newPassword
+ */
+private static void resetPasswordByOldPassword(String oldPassword, String newPassword) {
+    if (!BmobUser.getInstance().isLogin()) {
+        System.err.println("尚未登录");
+        return;
+    }
+    TestUser testUser = BmobUser.getInstance().getCurrentUser(TestUser.class);
+    testUser.resetPasswordByOldPassword(oldPassword, newPassword, new ResetPasswordListener() {
+        @Override
+        public void onSuccess(String msg) {
+            System.out.println(msg);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
 
 ## 账号连接
 
@@ -571,7 +667,5 @@ private static void verifySmsCode(String phoneNumber,String smsCode) {
 ```
 
 
-# 邮箱验证
 
-# 
 

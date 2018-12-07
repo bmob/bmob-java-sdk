@@ -3,14 +3,12 @@ package cn.bmob.data.test.table;
 import cn.bmob.data.Bmob;
 import cn.bmob.data.bean.op.BmobQuery;
 import cn.bmob.data.bean.table.BmobUser;
+import cn.bmob.data.callback.email.SendEmailListener;
 import cn.bmob.data.callback.object.DeleteListener;
 import cn.bmob.data.callback.object.GetListener;
 import cn.bmob.data.callback.object.GetsListener;
 import cn.bmob.data.callback.object.UpdateListener;
-import cn.bmob.data.callback.user.CheckUserSessionListener;
-import cn.bmob.data.callback.user.LoginListener;
-import cn.bmob.data.callback.user.SignUpListener;
-import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
+import cn.bmob.data.callback.user.*;
 import cn.bmob.data.exception.BmobException;
 import cn.bmob.data.test.bean.TestConfig;
 import cn.bmob.data.test.bean.TestUser;
@@ -180,8 +178,7 @@ public class UserTest {
     private static void signUpOrLoginSmsCode(String phoneNumber, String smsCode) {
         TestUser testUser = new TestUser();
         testUser.setMobilePhoneNumber(phoneNumber);
-        testUser.setSmsCode(smsCode);
-        testUser.signUpOrLoginSmsCode(new SignUpOrLoginSmsCodeListener<TestUser>() {
+        testUser.signUpOrLoginSmsCode(smsCode, new SignUpOrLoginSmsCodeListener<TestUser>() {
             @Override
             public void onSuccess(TestUser user) {
                 System.out.println("sms code sign up login" + user.getUsername() + "-" + user.getObjectId());
@@ -225,7 +222,7 @@ public class UserTest {
     /**
      * 删除用户，需确保objectId不为空，确保用户已经登录。
      */
-    private static void deleteUser(){
+    private static void deleteUser() {
         if (!BmobUser.getInstance().isLogin()) {
             System.err.println("尚未登录");
             return;
@@ -248,12 +245,12 @@ public class UserTest {
     /**
      * 获取多个用户信息
      */
-    private static void getUsers(){
+    private static void getUsers() {
         BmobQuery bmobQuery = new BmobQuery();
         bmobQuery.getObjects(new GetsListener<BmobUser>() {
             @Override
             public void onSuccess(List<BmobUser> array) {
-                System.out.println("get users "+array.size());
+                System.out.println("get users " + array.size());
             }
 
             @Override
@@ -263,5 +260,92 @@ public class UserTest {
         });
     }
 
+
+    /**
+     * 发送重置密码的邮件
+     *
+     * @param email
+     */
+    private static void sendEmailForResetPassword(String email) {
+
+        BmobUser.sendEmailForResetPassword(email, new SendEmailListener() {
+            @Override
+            public void onSuccess(String msg) {
+                System.out.println(msg);
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println(ex.getMessage());
+            }
+        });
+    }
+
+
+    /**
+     * 发送验证用户邮箱的邮件
+     *
+     * @param email
+     */
+    private static void sendEmailForVerifyUserEmail(String email) {
+
+        BmobUser.sendEmailForVerifyUserEmail(email, new SendEmailListener() {
+            @Override
+            public void onSuccess(String msg) {
+                System.out.println(msg);
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println(ex.getMessage());
+            }
+        });
+    }
+
+    /**
+     * 旧密码重置密码，需要登录
+     *
+     * @param oldPassword
+     * @param newPassword
+     */
+    private static void resetPasswordByOldPassword(String oldPassword, String newPassword) {
+        if (!BmobUser.getInstance().isLogin()) {
+            System.err.println("尚未登录");
+            return;
+        }
+        TestUser testUser = BmobUser.getInstance().getCurrentUser(TestUser.class);
+        testUser.resetPasswordByOldPassword(oldPassword, newPassword, new ResetPasswordListener() {
+            @Override
+            public void onSuccess(String msg) {
+                System.out.println(msg);
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println(ex.getMessage());
+            }
+        });
+    }
+
+
+    /**
+     * 短信验证码重置密码
+     *
+     * @param smsCode
+     * @param newPassword
+     */
+    private static void resetPasswordBySmsCode(String smsCode, String newPassword) {
+        BmobUser.resetPasswordBySmsCode(smsCode, newPassword, new ResetPasswordListener() {
+            @Override
+            public void onSuccess(String msg) {
+                System.out.println(msg);
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println(ex.getMessage());
+            }
+        });
+    }
 
 }

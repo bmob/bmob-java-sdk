@@ -138,7 +138,7 @@ public class ObjectTest {
                 /**
                  * 新增一条数据后修改该条数据
                  */
-                update(objectId);
+//                update(objectId);
             }
 
             @Override

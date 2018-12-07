@@ -110,7 +110,51 @@ public interface BmobApiService {
     @DELETE("/1/users/{objectId}")
     Call<JsonObject> deleteUser(@Path("objectId") String objectId);
 
+
+    /**
+     * 邮箱重置密码
+     * @param jsonObject
+     * @return
+     */
+    @POST("/1/requestPasswordReset")
+    Call<JsonObject> sendEmailForResetPassword(@Body JsonObject jsonObject);
+
+
+    /**
+     * 发送验证用户邮箱的邮件
+     * @param jsonObject
+     * @return
+     */
+    @POST("/1/requestEmailVerify")
+    Call<JsonObject> sendEmailForVerifyUserEmail(@Body JsonObject jsonObject);
+
+    /**
+     * 手机短信验证码重置密码
+     * @param jsonObject
+     * @return
+     */
+    @PUT("/1/resetPasswordBySmsCode/{smsCode}")
+    Call<JsonObject> resetUserPasswordBySmsCode(@Path("smsCode")String smsCode,@Body JsonObject jsonObject);
+
+
+
+    /**
+     * 手机短信验证码重置密码
+     * @param jsonObject
+     * @return
+     */
+    @PUT("/1/updateUserPassword/{objectId}")
+    Call<JsonObject> resetUserPasswordByOldPassword(@Path("objectId")String objectId,@Body JsonObject jsonObject);
+
+
+
+
+
+
+
+
     //TODO =========================================短信=============================================
+
 
     /**
      * 发送短信

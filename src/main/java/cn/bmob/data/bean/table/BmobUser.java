@@ -1,6 +1,7 @@
 package cn.bmob.data.bean.table;
 
 import cn.bmob.data.Bmob;
+import cn.bmob.data.callback.email.SendEmailListener;
 import cn.bmob.data.callback.object.GetListener;
 import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.user.*;
@@ -43,10 +44,6 @@ public class BmobUser extends BmobObject {
      */
     private Boolean mobilePhoneNumberVerified;
 
-    /**
-     * 手机短信验证码
-     */
-    private String smsCode;
 
     /**
      * 无参构造
@@ -147,14 +144,6 @@ public class BmobUser extends BmobObject {
     }
 
 
-    public String getSmsCode() {
-        return smsCode;
-    }
-
-    public void setSmsCode(String smsCode) {
-        this.smsCode = smsCode;
-    }
-
     /**
      * 用户登录
      *
@@ -183,10 +172,11 @@ public class BmobUser extends BmobObject {
      * 如果是新用户，则进行注册；且如果不设置username，则默认username将是手机号码，且默认mobilePhoneVerified将是true。
      * 如果是旧用户，则自动登陆。
      *
+     * @param smsCode
      * @param signUpOrLoginSmsCodeListener
      */
-    public <T extends BmobUser> void signUpOrLoginSmsCode(final SignUpOrLoginSmsCodeListener<T> signUpOrLoginSmsCodeListener) {
-        if (Utils.isStringEmpty(getSmsCode())) {
+    public <T extends BmobUser> void signUpOrLoginSmsCode(String smsCode, final SignUpOrLoginSmsCodeListener<T> signUpOrLoginSmsCodeListener) {
+        if (Utils.isStringEmpty(smsCode)) {
             signUpOrLoginSmsCodeListener.onFailure(new BmobException("Please input smsCode first.", 9015));
             return;
         }
@@ -259,6 +249,64 @@ public class BmobUser extends BmobObject {
      */
     public boolean isLogin() {
         return !Utils.isStringEmpty(getCurrUser());
+    }
+
+
+    /**
+     * 发送重置密码的邮件
+     * @param email
+     * @param sendEmailListener
+     */
+    public static void sendEmailForResetPassword(String email, SendEmailListener sendEmailListener) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("email", email);
+        Call<JsonObject> call = Bmob.getInstance().api().sendEmailForResetPassword(jsonObject);
+        request(call, sendEmailListener);
+    }
+
+    /**
+     * 发送验证用户邮箱的邮件
+     * @param email
+     * @param sendEmailListener
+     */
+    public static void sendEmailForVerifyUserEmail(String email, SendEmailListener sendEmailListener) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("email", email);
+        Call<JsonObject> call = Bmob.getInstance().api().sendEmailForVerifyUserEmail(jsonObject);
+        request(call, sendEmailListener);
+    }
+
+
+
+
+    /**
+     * 使用旧密码重置密码，需要用户登录
+     *
+     * @param oldPassword
+     * @param newPassword
+     * @param resetPasswordListener
+     */
+    public void resetPasswordByOldPassword(String oldPassword, String newPassword, ResetPasswordListener resetPasswordListener) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("oldPassword", oldPassword);
+        jsonObject.addProperty("newPassword", newPassword);
+        Call<JsonObject> call = Bmob.getInstance().api().resetUserPasswordByOldPassword(getObjectId(), jsonObject);
+        request(call, resetPasswordListener);
+    }
+
+
+    /**
+     * 使用短信验证码重置密码
+     *
+     * @param smsCode
+     * @param newPassword
+     * @param resetPasswordListener
+     */
+    public static void resetPasswordBySmsCode(String smsCode, String newPassword, ResetPasswordListener resetPasswordListener) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("password", newPassword);
+        Call<JsonObject> call = Bmob.getInstance().api().resetUserPasswordByOldPassword(smsCode, jsonObject);
+        request(call, resetPasswordListener);
     }
 
 

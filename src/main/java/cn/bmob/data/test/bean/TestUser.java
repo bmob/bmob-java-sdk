@@ -12,5 +12,13 @@ public class TestUser extends BmobUser {
      */
     private String nickname;
 
+    /**
+     * 年龄
+     */
+    private Integer age;
 
+    /**
+     * 性别
+     */
+    private Integer gender;
 }

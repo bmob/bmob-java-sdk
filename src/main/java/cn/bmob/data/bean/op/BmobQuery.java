@@ -18,6 +18,7 @@ import retrofit2.Call;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static cn.bmob.data.utils.Utils.getTableNameFromClass;
 import static cn.bmob.data.utils.Utils.request;
 
 public class BmobQuery {
@@ -716,7 +717,9 @@ public class BmobQuery {
      */
     public <T> void getObject(String objectId, final GetListener<T> getListener) {
         Map<String, Object> map = buildMap();
-        Call<JsonObject> call = Bmob.getInstance().api().get(Utils.getClassFromBmobCallback(getListener).getSimpleName(), objectId, map);
+        Class clazz = Utils.getClassFromBmobCallback(getListener);
+        String tableName = getTableNameFromClass(clazz);
+        Call<JsonObject> call = Bmob.getInstance().api().get(tableName, objectId, map);
         request(call, getListener);
     }
 
@@ -728,8 +731,9 @@ public class BmobQuery {
      */
     public <T> void getObjects(GetsListener<T> getsListener) {
         Map<String, Object> map = buildMap();
-
-        Call<JsonObject> call = Bmob.getInstance().api().getObjects(Utils.getClassFromBmobCallback(getsListener).getSimpleName(), map);
+        Class clazz = Utils.getClassFromBmobCallback(getsListener);
+        String tableName = getTableNameFromClass(clazz);
+        Call<JsonObject> call = Bmob.getInstance().api().getObjects(tableName, map);
         request(call, getsListener);
     }
 
@@ -742,7 +746,9 @@ public class BmobQuery {
         setCount(1);
         setLimit(0);
         Map<String, Object> map = buildMap();
-        Call<JsonObject> call = Bmob.getInstance().api().getObjects(Utils.getClassFromBmobCallback(countListener).getSimpleName(), map);
+        Class clazz = Utils.getClassFromBmobCallback(countListener);
+        String tableName = getTableNameFromClass(clazz);
+        Call<JsonObject> call = Bmob.getInstance().api().getObjects(tableName, map);
         request(call, countListener);
     }
 

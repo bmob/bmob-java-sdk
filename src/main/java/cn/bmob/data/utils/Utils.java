@@ -105,6 +105,26 @@ public class Utils {
 
 
     /**
+     * 从类名称获取表名称
+     *
+     * @param clazz
+     * @return
+     */
+    public static String getTableNameFromClass(Class clazz) {
+        String tableName;
+        if (clazz.getSimpleName().equals(BmobUser.class.getSimpleName())) {
+            tableName = "_User";
+        } else if (clazz.getSimpleName().equals(BmobRole.class.getSimpleName())) {
+            tableName = "_Role";
+        } else if (clazz.getSimpleName().equals(BmobArticle.class.getSimpleName())) {
+            tableName = "_Role";
+        } else {
+            tableName = clazz.getSimpleName();
+        }
+        return tableName;
+    }
+
+    /**
      * 获取对象
      *
      * @param response
@@ -164,7 +184,14 @@ public class Utils {
                     //TODO 保存user的json信息到本地，还是内存中？B/S系统怎么存？C/S系统怎么存？
 
                     String json = Utils.getJsonFromResponse(response);
+                    /**
+                     * 设置当前用户信息
+                     */
                     BmobUser.getInstance().setCurrUser(json);
+                    /**
+                     * 设置登录token
+                     */
+                    BmobUser.getInstance().setSessionToken(bmobResponse.getSessionToken());
                 }
                 ((BmobGetCallback) bmobCallback).onSuccess(Utils.getObjectFromResponseAndBmobCallback(response, bmobCallback));
             } else if (bmobCallback instanceof BmobSaveCallback) {
@@ -236,16 +263,18 @@ public class Utils {
         bmobObject.setObjectId(null);
         bmobObject.setCreatedAt(null);
         bmobObject.setUpdatedAt(null);
+        if (bmobObject instanceof BmobUser) {
+            ((BmobUser) bmobObject).setSessionToken(null);
+        }
         return bmobObject;
     }
 
 
     /**
-     *
      * @param jsonObject
      * @param data
      */
-    public static void getDataObject(JsonObject jsonObject,JsonObject data) {
+    public static void getDataObject(JsonObject jsonObject, JsonObject data) {
         if (data.size() > 0) {
             Set<Map.Entry<String, JsonElement>> entrySet = data.entrySet();
             Iterator<Map.Entry<String, JsonElement>> iterator = entrySet.iterator();
@@ -259,17 +288,15 @@ public class Utils {
     }
 
     /**
-     *
      * @param bmobObject
      * @return
      */
     public static JsonObject getJsonObjectFromObject(BmobObject bmobObject) {
         String json = GsonUtil.toJson(bmobObject);
         JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-        jsonObject = disposePointerType(bmobObject,jsonObject);
+        jsonObject = disposePointerType(bmobObject, jsonObject);
         return jsonObject;
     }
-
 
 
     /**
@@ -284,7 +311,7 @@ public class Utils {
         for (Field f : fields) {
             if (BmobUser.class.isAssignableFrom(f.getType())) {
 
-                if (jsonObject.get(f.getName())!=null) {
+                if (jsonObject.get(f.getName()) != null) {
                     JsonObject obj = new JsonObject();
                     obj.addProperty("__type", "Pointer");
                     obj.addProperty("objectId", jsonObject.get(f.getName()).getAsJsonObject().get("objectId").getAsString());
@@ -293,7 +320,7 @@ public class Utils {
                 }
                 continue;
             } else if (BmobRole.class.isAssignableFrom(f.getType())) {
-                if (jsonObject.get(f.getName())!=null) {
+                if (jsonObject.get(f.getName()) != null) {
                     JsonObject obj = new JsonObject();
                     obj.addProperty("__type", "Pointer");
                     obj.addProperty("objectId", jsonObject.get(f.getName()).getAsJsonObject().get("objectId").getAsString());
@@ -302,7 +329,7 @@ public class Utils {
                 }
                 continue;
             } else if (BmobObject.class.isAssignableFrom(f.getType())) {
-                if (jsonObject.get(f.getName())!=null) {
+                if (jsonObject.get(f.getName()) != null) {
                     JsonObject obj = new JsonObject();
                     obj.addProperty("__type", "Pointer");
                     obj.addProperty("objectId", jsonObject.get(f.getName()).getAsJsonObject().get("objectId").getAsString());
@@ -315,21 +342,16 @@ public class Utils {
     }
 
 
-
-
     /**
-     *
      * @param bmobObject
      * @param data
      * @return
      */
-    public static JsonObject getJsonObjectRequest(BmobObject bmobObject,JsonObject data){
+    public static JsonObject getJsonObjectRequest(BmobObject bmobObject, JsonObject data) {
         JsonObject jsonObject = Utils.getJsonObjectFromObject(Utils.removeEssentialAttribute(bmobObject));
-        Utils.getDataObject(jsonObject,data);
+        Utils.getDataObject(jsonObject, data);
         return jsonObject;
     }
-
-
 
 
     /**

@@ -91,6 +91,7 @@ public class TestObject extends BmobObject {
      */
     private BmobFile file;
     /**
+     * 时间类型
      */
     private BmobDate date;
     /**
@@ -248,9 +249,329 @@ private static void delete(String objectId) {
 
 # 用户表
 
+|属性|说明|
+|----|----|
+|username|用户名，可以是邮箱、手机号码、第三方平台的用户唯一标志|
+|password|用户密码|
+|email|用户邮箱|
+|emailVerified|用户邮箱认证状态|
+|mobilePhoneNumber|用户手机号码|
+|mobilePhoneNumberVerified|用户手机号码认证状态|
+
+
+## 自定义实体类
+```
+@Data
+public class TestUser extends BmobUser {
+
+    /**
+     * 昵称
+     */
+    private String nickname;
+
+    /**
+     * 年龄
+     */
+    private Integer age;
+
+    /**
+     * 性别
+     */
+    private Integer gender;
+}
+```
+
+## 注册
+```
+/**
+ * 注册
+ */
+private static void signUp() {
+    final String username = System.currentTimeMillis() + "";
+    final String password = System.currentTimeMillis() + "";
+    TestUser testUser = new TestUser();
+    testUser.setNickname("用户昵称");
+    testUser.setAge(20);
+    testUser.setGender(1);
+    testUser.setUsername(username);
+    testUser.setPassword(password);
+    testUser.signUp(new SignUpListener() {
+        @Override
+        public void onSuccess(String objectId, String createdAt) {
+            System.out.println("sign up " + objectId + "-" + createdAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+        }
+    });
+}
+```
+
+## 登录
+```
+/**
+ * 登录
+ *
+ * @param username
+ * @param password
+ */
+private static void login(String username, String password) {
+    TestUser testUser= new TestUser();
+    testUser.setUsername(username);
+    testUser.setPassword(password);
+    testUser.login(new LoginListener<TestUser>() {
+        public void onSuccess(TestUser user) {
+            System.out.println("login " + user.getUsername() + user.getSessionToken());
+        }
+
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+        }
+    });
+}
+```
+
+## 手机短信验证码注册/登录
+1、发送短信验证码，见文档短信验证的发送短信验证码。
+2、验证短信验证码后注册/登录。
+```
+/**
+ * 手机短信验证码注册/登录
+ *
+ * @param phoneNumber
+ * @param smsCode
+ */
+private static void signUpOrLoginSmsCode(String phoneNumber, String smsCode) {
+    BmobUser bmobUser = new BmobUser();
+    bmobUser.setMobilePhoneNumber(phoneNumber);
+    bmobUser.setSmsCode(smsCode);
+    bmobUser.signUpOrLoginSmsCode(new SignUpOrLoginSmsCodeListener<BmobUser>() {
+        @Override
+        public void onSuccess(BmobUser user) {
+            System.out.println("sign up " + user.getUsername() + "-" + user.getObjectId());
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+        }
+    });
+}
+```
+
+## 获取用户信息
+
+```
+/**
+ * 获取用户信息
+ * @param objectId
+ */
+private static void getUserInfo(String objectId) {
+    BmobUser.getUserInfo(objectId, new GetListener<TestUser>() {
+        @Override
+        public void onSuccess(TestUser user) {
+            System.out.println("get user info " + user.getUsername() + "-" + user.getObjectId());
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+        }
+    });
+}
+```
+或
+```
+/**
+ * 查询用户信息
+ * @param objectId
+ */
+private static void queryUserInfo(String objectId){
+    BmobQuery bmobQuery = new BmobQuery();
+    bmobQuery.getObject(objectId, new GetListener<TestUser>() {
+        @Override
+        public void onSuccess(TestUser user) {
+            System.out.println("query user info " + user.getUsername() + "-" + user.getObjectId());
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+        }
+    });
+}
+```
+## 登录是否失效
+```
+/**
+ * 查询登录是否失效
+ */
+private static void checkUserSession(){
+    TestUser testUser = BmobUser.getInstance().getCurrentUser(TestUser.class);
+    testUser.checkUserSession(new CheckUserSessionListener() {
+        @Override
+        public void onSuccess(String msg) {
+            System.out.println(msg);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+## 修改用户信息
+
+1、修改用户信息，需确保objectId不为空，确保用户已经登录。
+2、在更新用户信息时，若用户邮箱有变更并且在管理后台打开了邮箱验证选项，Bmob云后端会自动发送一封验证邮件给用户。
+
+```
+/**
+ * 修改用户信息，需确保objectId不为空，确保用户已经登录。
+ * 在更新用户信息时，若用户邮箱有变更并且在管理后台打开了邮箱验证选项，Bmob云后端会自动发送一封验证邮件给用户。
+ */
+private static void updateUserInfo() {
+    if (!BmobUser.getInstance().isLogin()) {
+        System.err.println("尚未登录");
+        return;
+    }
+    TestUser testUser = BmobUser.getInstance().getCurrentUser(TestUser.class);
+    testUser.setNickname("修改用户昵称");
+    testUser.setGender(2);
+    testUser.setAge(30);
+    testUser.updateUserInfo(new UpdateListener() {
+        @Override
+        public void onSuccess(String updatedAt) {
+            System.out.println(updatedAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+
+## 删除用户
+
+1、删除用户，需确保objectId不为空，确保用户已经登录。
+
+```
+/**
+ * 删除用户，需确保objectId不为空，确保用户已经登录。
+ */
+private static void deleteUser(){
+    if (!BmobUser.getInstance().isLogin()) {
+        System.err.println("尚未登录");
+        return;
+    }
+    TestUser testUser = BmobUser.getInstance().getCurrentUser(TestUser.class);
+    testUser.delete(new DeleteListener() {
+        @Override
+        public void onSuccess(String msg) {
+            System.out.println(msg);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+
+## 获取多个用户信息
+```
+/**
+ * 获取多个用户信息
+ */
+private static void getUsers(){
+    BmobQuery bmobQuery = new BmobQuery();
+    bmobQuery.getObjects(new GetsListener<BmobUser>() {
+        @Override
+        public void onSuccess(List<BmobUser> array) {
+            System.out.println("get users "+array.size());
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+## 邮箱重置密码
+
+## 手机短信验证码重置密码
+
+## 旧密码重置密码
+
+## 账号连接
+
 # 角色表
 
 # 图文表
 
 
+
+# 短信验证
+
+## 发送短信验证码
+```
+/**
+ * 发送验证短信，如果使用默认模板，则设置template为空字符串或不设置
+ * @param phoneNumber
+ * @param template 
+ */
+private static void sendSms(String phoneNumber,String template) {
+    BmobSms bmobSms = new BmobSms();
+    bmobSms.setMobilePhoneNumber(phoneNumber);
+    bmobSms.setTemplate(template);
+    bmobSms.sendSmsCode(new SendSmsCodeListener() {
+        @Override
+        public void onSuccess(String smsId) {
+            System.out.println("发送短信成功：" + smsId);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println("发送短信失败：" + ex.getCode() + "-" + ex.getMessage());
+        }
+    });
+}
+```
+## 验证短信验证码
+```
+/**
+ * 验证短信验证码
+ * @param phoneNumber
+ * @param smsCode
+ */
+private static void verifySmsCode(String phoneNumber,String smsCode) {
+    BmobSms bmobSms = new BmobSms();
+    bmobSms.setMobilePhoneNumber(phoneNumber);
+    bmobSms.verifySmsCode(smsCode, new VerifySmsCodeListener() {
+        @Override
+        public void onSuccess(String msg) {
+            System.out.println("验证短信验证码成功：" + msg);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println("验证短信验证码失败：" + ex.getMessage());
+        }
+    });
+}
+```
+
+
+# 邮箱验证
+
+# 
 

@@ -93,6 +93,23 @@ public interface BmobApiService {
     Call<JsonObject> checkUserSession(@Path("objectId") String objectId);
 
 
+    /**
+     * 更新某个用户信息
+     *
+     * @param objectId
+     * @return
+     */
+    @PUT("/1/users/{objectId}")
+    Call<JsonObject> updateUserInfo(@Path("objectId") String objectId, @Body JsonObject jsonObject);
+
+    /**
+     * 删除某个用户
+     * @param objectId
+     * @return
+     */
+    @DELETE("/1/users/{objectId}")
+    Call<JsonObject> deleteUser(@Path("objectId") String objectId);
+
     //TODO =========================================短信=============================================
 
     /**
@@ -125,7 +142,6 @@ public interface BmobApiService {
 
     @DELETE("/2/files/{cdnName}/{url}")
     Call<JsonObject> delete(@Path("cdnName") String cdnName, @Path("url") String url);
-
 
 
     @POST("/2/cdnBatchDelete")

@@ -161,6 +161,21 @@ public class BmobObject implements Serializable {
     }
 
 
+    /**
+     *
+     * @return
+     */
+    public BmobACL getACL() {
+        return ACL;
+    }
+
+    /**
+     *
+     * @param ACL
+     */
+    public void setACL(BmobACL ACL) {
+        this.ACL = ACL;
+    }
 
 
     //TODO======================================数组字段操作==================================================

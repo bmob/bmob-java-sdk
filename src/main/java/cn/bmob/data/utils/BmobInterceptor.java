@@ -1,6 +1,7 @@
 package cn.bmob.data.utils;
 
 import cn.bmob.data.Bmob;
+import cn.bmob.data.bean.table.BmobUser;
 import cn.bmob.data.config.BmobConfig;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -21,12 +22,16 @@ public class BmobInterceptor {
     public static Interceptor headerInterceptor() {
         return new Interceptor() {
             public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request()
-                        .newBuilder()
-                        .addHeader("Content-Type", BmobConfig.getContentType())
-                        .addHeader("X-Bmob-Application-Id", Bmob.getInstance().getAppId())
-                        .addHeader("X-Bmob-REST-API-Key", Bmob.getInstance().getApiKey())
-                        .build();
+                Request.Builder builder = chain.request().newBuilder();
+                builder.addHeader("X-Bmob-Application-Id", Bmob.getInstance().getAppId());
+                builder.addHeader("X-Bmob-REST-API-Key", Bmob.getInstance().getApiKey());
+                builder.addHeader("Content-Type", BmobConfig.getContentType());
+                String session = BmobUser.getInstance().getSessionToken();
+                if (!Utils.isStringEmpty(session)) {
+                    builder.addHeader("X-Bmob-Session-Token", session);
+                    System.out.println(session);
+                }
+                Request request = builder.build();
                 return chain.proceed(request);
             }
         };

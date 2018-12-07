@@ -2,10 +2,8 @@ package cn.bmob.data.bean.table;
 
 import cn.bmob.data.Bmob;
 import cn.bmob.data.callback.object.GetListener;
-import cn.bmob.data.callback.user.CheckUserSessionListener;
-import cn.bmob.data.callback.user.LoginListener;
-import cn.bmob.data.callback.user.SignUpListener;
-import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
+import cn.bmob.data.callback.object.UpdateListener;
+import cn.bmob.data.callback.user.*;
 import cn.bmob.data.exception.BmobException;
 import cn.bmob.data.utils.Utils;
 import com.google.gson.JsonObject;
@@ -55,6 +53,44 @@ public class BmobUser extends BmobObject {
      */
     public BmobUser() {
         super("_User");
+    }
+
+    /**
+     * 实例
+     */
+    private static BmobUser instance;
+
+
+    /**
+     * 获取实例
+     *
+     * @return
+     */
+    public static BmobUser getInstance() {
+        if (instance == null) {
+            instance = new BmobUser();
+        }
+        return instance;
+    }
+
+    /**
+     * 当前用户信息，JSON格式
+     */
+    private String currUser;
+
+
+    /**
+     * @return
+     */
+    public String getCurrUser() {
+        return currUser;
+    }
+
+    /**
+     * @param currUser
+     */
+    public void setCurrUser(String currUser) {
+        this.currUser = currUser;
     }
 
 
@@ -137,7 +173,7 @@ public class BmobUser extends BmobObject {
      * @param signUpListener
      */
     public void signUp(final SignUpListener signUpListener) {
-        Call<JsonObject> call = Bmob.getInstance().api().signUp(Utils.getJsonObjectRequest(this,data));
+        Call<JsonObject> call = Bmob.getInstance().api().signUp(Utils.getJsonObjectRequest(this, data));
         request(call, signUpListener);
     }
 
@@ -150,12 +186,12 @@ public class BmobUser extends BmobObject {
      * @param signUpOrLoginSmsCodeListener
      */
     public <T extends BmobUser> void signUpOrLoginSmsCode(final SignUpOrLoginSmsCodeListener<T> signUpOrLoginSmsCodeListener) {
-        if (Utils.isStringEmpty(smsCode)) {
+        if (Utils.isStringEmpty(getSmsCode())) {
             signUpOrLoginSmsCodeListener.onFailure(new BmobException("Please input smsCode first.", 9015));
             return;
         }
 
-        Call<JsonObject> call = Bmob.getInstance().api().signUp(Utils.getJsonObjectRequest(this,data));
+        Call<JsonObject> call = Bmob.getInstance().api().signUp(Utils.getJsonObjectRequest(this, data));
         request(call, signUpOrLoginSmsCodeListener);
     }
 
@@ -176,8 +212,17 @@ public class BmobUser extends BmobObject {
         request(call, getListener);
     }
 
+
     /**
-     * 获取某个用户的信息
+     * 更新某个用户的信息
+     */
+    public void updateUserInfo(UpdateListener updateListener) {
+        Call<JsonObject> call = Bmob.getInstance().api().updateUserInfo(getObjectId(), Utils.getJsonObjectRequest(this, data));
+        request(call, updateListener);
+    }
+
+    /**
+     * 检查登录是否失效
      *
      * @param checkUserSessionListener
      */
@@ -191,27 +236,6 @@ public class BmobUser extends BmobObject {
         request(call, checkUserSessionListener);
     }
 
-
-    private static BmobUser instance;
-
-
-    public static BmobUser getInstance() {
-        if (instance == null) {
-            instance = new BmobUser();
-        }
-        return instance;
-    }
-
-    private String currUser;
-
-
-    public String getCurrUser() {
-        return currUser;
-    }
-
-    public void setCurrUser(String currUser) {
-        this.currUser = currUser;
-    }
 
     /**
      * 获取当前登录用户

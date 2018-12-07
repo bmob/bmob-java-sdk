@@ -608,8 +608,80 @@ private static void resetPasswordByOldPassword(String oldPassword, String newPas
 }
 ```
 
-## 账号连接
+## 第三方账号系统关联
 
+### 第三方账号注册/登录
+```
+/**
+ * 登录
+ */
+private static void login() {
+    BmobUser.loginQQ("", "", "", new ThirdLoginListener() {
+        @Override
+        public void onSuccess() {
+            System.out.println();
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+
+```
+
+### 已有用户与第三方绑定
+```
+/**
+ * 绑定
+ */
+private static void bind() {
+    if (!BmobUser.getInstance().isLogin()) {
+        System.err.println("尚未登录");
+        return;
+    }
+    TestUser testUser = BmobUser.getInstance().getCurrentUser(TestUser.class);
+    testUser.bindQQ("", "", "", new ThirdBindListener() {
+        @Override
+        public void onSuccess(String updatedAt) {
+            System.out.println(updatedAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+
+```
+
+### 已有用户与第三方解绑
+```
+/**
+ * 解绑
+ */
+private static void unbind() {
+    if (!BmobUser.getInstance().isLogin()) {
+        System.err.println("尚未登录");
+        return;
+    }
+    TestUser testUser = BmobUser.getInstance().getCurrentUser(TestUser.class);
+    testUser.unBindQQ(new ThirdUnBindListener() {
+        @Override
+        public void onSuccess(String updatedAt) {
+            System.out.println(updatedAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+
+```
 # 角色表
 
 # 图文表

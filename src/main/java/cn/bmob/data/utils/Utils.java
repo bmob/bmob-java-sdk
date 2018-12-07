@@ -16,6 +16,8 @@ import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;
 import cn.bmob.data.callback.user.LoginListener;
 import cn.bmob.data.callback.user.SignUpOrLoginSmsCodeListener;
+import cn.bmob.data.callback.user.ThirdBindListener;
+import cn.bmob.data.callback.user.ThirdUnBindListener;
 import cn.bmob.data.exception.BmobException;
 import com.google.gson.*;
 import com.oracle.javafx.jmx.json.JSONException;
@@ -29,6 +31,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -208,6 +211,10 @@ public class Utils {
                 ((CountListener) bmobCallback).onSuccess(bmobResponse.getCount());
             } else if (bmobCallback instanceof UploadFileListener) {
                 ((UploadFileListener) bmobCallback).onSuccess(bmobResponse.getCdn(), bmobResponse.getFilename(), bmobResponse.getUrl());
+            } else if (bmobCallback instanceof ThirdBindListener) {
+                ((ThirdBindListener) bmobCallback).onSuccess(bmobResponse.getUpdatedAt());
+            } else if (bmobCallback instanceof ThirdUnBindListener) {
+                ((ThirdUnBindListener) bmobCallback).onSuccess(bmobResponse.getUpdatedAt());
             }
 
         } else {
@@ -477,5 +484,65 @@ public class Utils {
      */
     public static String getTargetUrl(String url) {
         return url.substring(Utils.indexOf(url, "/", 3) + 1, url.length());
+    }
+
+
+    /**
+     * @return
+     */
+    public static JsonObject getAnonymousJsonObject() {
+        JsonObject anonymous = new JsonObject();
+        anonymous.addProperty("id", UUID.randomUUID().toString().toLowerCase().replace("-", ""));
+        JsonObject platform = new JsonObject();
+        platform.add("anonymous", anonymous);
+        return platform;
+    }
+
+    /**
+     * @param openid
+     * @param access_token
+     * @param expires_in
+     */
+    public static JsonObject getWeixinObject(String openid, String access_token, String expires_in) {
+        JsonObject weixin = new JsonObject();
+        weixin.addProperty("openid", openid);
+        weixin.addProperty("access_token", access_token);
+        weixin.addProperty("expires_in", expires_in);
+        JsonObject platform = new JsonObject();
+        platform.add("weixin", weixin);
+        return platform;
+    }
+
+
+    /**
+     * @param openid
+     * @param access_token
+     * @param expires_in
+     * @return
+     */
+    public static JsonObject getQQObject(String openid, String access_token, String expires_in) {
+        JsonObject qq = new JsonObject();
+        qq.addProperty("openid", openid);
+        qq.addProperty("access_token", access_token);
+        qq.addProperty("expires_in", expires_in);
+        JsonObject platform = new JsonObject();
+        platform.add("qq", qq);
+        return platform;
+    }
+
+    /**
+     * @param uid
+     * @param access_token
+     * @param expires_in
+     * @return
+     */
+    public static JsonObject getWeiboObject(String uid, String access_token, String expires_in) {
+        JsonObject weibo = new JsonObject();
+        weibo.addProperty("uid", uid);
+        weibo.addProperty("access_token", access_token);
+        weibo.addProperty("expires_in", expires_in);
+        JsonObject platform = new JsonObject();
+        platform.add("weibo", weibo);
+        return platform;
     }
 }

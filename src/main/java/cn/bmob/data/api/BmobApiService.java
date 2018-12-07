@@ -104,6 +104,7 @@ public interface BmobApiService {
 
     /**
      * 删除某个用户
+     *
      * @param objectId
      * @return
      */
@@ -113,6 +114,7 @@ public interface BmobApiService {
 
     /**
      * 邮箱重置密码
+     *
      * @param jsonObject
      * @return
      */
@@ -122,6 +124,7 @@ public interface BmobApiService {
 
     /**
      * 发送验证用户邮箱的邮件
+     *
      * @param jsonObject
      * @return
      */
@@ -130,27 +133,51 @@ public interface BmobApiService {
 
     /**
      * 手机短信验证码重置密码
+     *
      * @param jsonObject
      * @return
      */
     @PUT("/1/resetPasswordBySmsCode/{smsCode}")
-    Call<JsonObject> resetUserPasswordBySmsCode(@Path("smsCode")String smsCode,@Body JsonObject jsonObject);
+    Call<JsonObject> resetUserPasswordBySmsCode(@Path("smsCode") String smsCode, @Body JsonObject jsonObject);
 
+
+    /**
+     * 未登录，第三方账号系统进行授权登录/注册
+     *
+     * @param jsonObject
+     * @return
+     */
+    @POST("/1/users")
+    Call<JsonObject> thirdSignUpLogin(@Body JsonObject jsonObject);
+
+
+    /**
+     * 已登录，将现有bmob用户与第三方账号系统关联绑定
+     *
+     * @param jsonObject
+     * @return
+     */
+    @PUT("/1/users/{objectId}")
+    Call<JsonObject> thirdBind(@Path("objectId") String objectId, @Body JsonObject jsonObject);
+
+    /**
+     * 已登录，将现有bmob用户与第三方账号系统解除关联
+     *
+     * @param jsonObject
+     * @return
+     */
+    @PUT("/1/users/{objectId}")
+    Call<JsonObject> thirdUnBind(@Path("objectId") String objectId, @Body JsonObject jsonObject);
 
 
     /**
      * 手机短信验证码重置密码
+     *
      * @param jsonObject
      * @return
      */
     @PUT("/1/updateUserPassword/{objectId}")
-    Call<JsonObject> resetUserPasswordByOldPassword(@Path("objectId")String objectId,@Body JsonObject jsonObject);
-
-
-
-
-
-
+    Call<JsonObject> resetUserPasswordByOldPassword(@Path("objectId") String objectId, @Body JsonObject jsonObject);
 
 
     //TODO =========================================短信=============================================

@@ -10,7 +10,7 @@ import cn.bmob.data.utils.Utils;
 import com.google.gson.JsonObject;
 import retrofit2.Call;
 
-import static cn.bmob.data.utils.Utils.request;
+import static cn.bmob.data.utils.Utils.*;
 
 public class BmobUser extends BmobObject {
 
@@ -254,6 +254,7 @@ public class BmobUser extends BmobObject {
 
     /**
      * 发送重置密码的邮件
+     *
      * @param email
      * @param sendEmailListener
      */
@@ -266,6 +267,7 @@ public class BmobUser extends BmobObject {
 
     /**
      * 发送验证用户邮箱的邮件
+     *
      * @param email
      * @param sendEmailListener
      */
@@ -275,8 +277,6 @@ public class BmobUser extends BmobObject {
         Call<JsonObject> call = Bmob.getInstance().api().sendEmailForVerifyUserEmail(jsonObject);
         request(call, sendEmailListener);
     }
-
-
 
 
     /**
@@ -305,8 +305,190 @@ public class BmobUser extends BmobObject {
     public static void resetPasswordBySmsCode(String smsCode, String newPassword, ResetPasswordListener resetPasswordListener) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("password", newPassword);
-        Call<JsonObject> call = Bmob.getInstance().api().resetUserPasswordByOldPassword(smsCode, jsonObject);
+        Call<JsonObject> call = Bmob.getInstance().api().resetUserPasswordBySmsCode(smsCode, jsonObject);
         request(call, resetPasswordListener);
+    }
+
+
+    /**
+     * 未登录，进行授权登录/注册
+     *
+     * @param platform
+     * @param thirdLoginListener
+     */
+    private static void thirdSignUpLogin(JsonObject platform, ThirdLoginListener thirdLoginListener) {
+        JsonObject auth = new JsonObject();
+        auth.add("authData", platform);
+        Call<JsonObject> call = Bmob.getInstance().api().thirdSignUpLogin(auth);
+        request(call, thirdLoginListener);
+    }
+
+    /**
+     * 未登录，进行微博登录
+     *
+     * @param uid
+     * @param access_token
+     * @param expires_in
+     * @param thirdLoginListener
+     */
+    public static void loginWeibo(String uid, String access_token, String expires_in, ThirdLoginListener thirdLoginListener) {
+        thirdSignUpLogin(getWeiboObject(uid, access_token, expires_in), thirdLoginListener);
+    }
+
+    /**
+     * 未登录，进行qq登录
+     *
+     * @param openid
+     * @param access_token
+     * @param expires_in
+     * @param thirdLoginListener
+     */
+    public static void loginQQ(String openid, String access_token, String expires_in, ThirdLoginListener thirdLoginListener) {
+        thirdSignUpLogin(getQQObject(openid, access_token, expires_in), thirdLoginListener);
+    }
+
+    /**
+     * 未登录，进行微信登录
+     *
+     * @param openid
+     * @param access_token
+     * @param expires_in
+     * @param thirdLoginListener
+     */
+    public static void loginWeixin(String openid, String access_token, String expires_in, ThirdLoginListener thirdLoginListener) {
+        thirdSignUpLogin(getWeixinObject(openid, access_token, expires_in), thirdLoginListener);
+    }
+
+    /**
+     * 未登录，进行匿名登录
+     *
+     * @param
+     * @param thirdLoginListener
+     */
+    public static void loginAnonymous(ThirdLoginListener thirdLoginListener) {
+
+        thirdSignUpLogin(getAnonymousJsonObject(), thirdLoginListener);
+    }
+
+
+    /**
+     * 已登录，进行授权绑定
+     *
+     * @param platform
+     * @param thirdBindListener
+     */
+    private void thirdBind(JsonObject platform, ThirdBindListener thirdBindListener) {
+        JsonObject auth = new JsonObject();
+        auth.add("authData", platform);
+        Call<JsonObject> call = Bmob.getInstance().api().thirdBind(getObjectId(), auth);
+        request(call, thirdBindListener);
+    }
+
+    /**
+     * 已登录，进行微博授权绑定
+     *
+     * @param uid
+     * @param access_token
+     * @param expires_in
+     * @param thirdBindListener
+     */
+    public void bindWeibo(String uid, String access_token, String expires_in, ThirdBindListener thirdBindListener) {
+        thirdBind(getWeiboObject(uid, access_token, expires_in), thirdBindListener);
+    }
+
+    /**
+     * 已登录，进行qq授权绑定
+     *
+     * @param openid
+     * @param access_token
+     * @param expires_in
+     * @param thirdBindListener
+     */
+    public void bindQQ(String openid, String access_token, String expires_in, ThirdBindListener thirdBindListener) {
+        thirdBind(getQQObject(openid, access_token, expires_in), thirdBindListener);
+    }
+
+    /**
+     * 已登录，进行微信授权绑定
+     *
+     * @param openid
+     * @param access_token
+     * @param expires_in
+     * @param thirdBindListener
+     */
+    public void bindWeixin(String openid, String access_token, String expires_in, ThirdBindListener thirdBindListener) {
+        thirdBind(getWeixinObject(openid, access_token, expires_in), thirdBindListener);
+    }
+
+
+    /**
+     * 已登录，进行匿名授权绑定
+     *
+     * @param thirdBindListener
+     */
+    private void bindAnonymous(ThirdBindListener thirdBindListener) {
+        thirdBind(getAnonymousJsonObject(), thirdBindListener);
+    }
+
+
+    /**
+     * 已登录，进行授权绑定
+     *
+     * @param platform
+     * @param thirdUnBindListener
+     */
+    private void thirdUnBind(JsonObject platform, ThirdUnBindListener thirdUnBindListener) {
+        JsonObject auth = new JsonObject();
+        auth.add("authData", platform);
+        Call<JsonObject> call = Bmob.getInstance().api().thirdUnBind(getObjectId(), auth);
+        request(call, thirdUnBindListener);
+    }
+
+
+    /**
+     * 已登录，进行匿名解除绑定
+     *
+     * @param thirdUnBindListener
+     */
+    private void unBindAnonymous(ThirdUnBindListener thirdUnBindListener) {
+        JsonObject platform = new JsonObject();
+        platform.addProperty("anonymous", "null");
+        thirdUnBind(platform, thirdUnBindListener);
+    }
+
+    /**
+     * 已登录，进行微博解除绑定
+     *
+     * @param thirdUnBindListener
+     */
+    public void unBindWeibo(ThirdUnBindListener thirdUnBindListener) {
+        JsonObject platform = new JsonObject();
+        platform.addProperty("weibo", "null");
+        thirdUnBind(platform, thirdUnBindListener);
+    }
+
+
+    /**
+     * 已登录，进行微信解除绑定
+     *
+     * @param thirdUnBindListener
+     */
+    public void unBindWeixin(ThirdUnBindListener thirdUnBindListener) {
+        JsonObject platform = new JsonObject();
+        platform.addProperty("weixin", "null");
+        thirdUnBind(platform, thirdUnBindListener);
+    }
+
+
+    /**
+     * 已登录，进行QQ解除绑定
+     *
+     * @param thirdUnBindListener
+     */
+    public void unBindQQ(ThirdUnBindListener thirdUnBindListener) {
+        JsonObject platform = new JsonObject();
+        platform.addProperty("qq", "null");
+        thirdUnBind(platform, thirdUnBindListener);
     }
 
 

@@ -33,7 +33,12 @@ public class UserTest {
         /**
          * 获取多个用户信息
          */
-        getUsers();
+//        getUsers();
+
+
+        login("1544174390195", "1544174390195");
+
+
     }
 
 
@@ -80,26 +85,31 @@ public class UserTest {
         testUser.login(new LoginListener<TestUser>() {
             public void onSuccess(TestUser user) {
                 System.out.println("login " + user.getUsername() + "-" + user.getSessionToken());
-                /**
-                 * 获取用户信息
-                 */
-                getUserInfo(user.getObjectId());
-                /**
-                 * 查询用户信息
-                 */
-                queryUserInfo(user.getObjectId());
-                /**
-                 * 检查登录是否失效
-                 */
-                checkUserSession();
-                /**
-                 * 更新用户信息
-                 */
-                updateUserInfo();
-                /**
-                 * 删除用户
-                 */
-                deleteUser();
+//                /**
+//                 * 获取用户信息
+//                 */
+//                getUserInfo(user.getObjectId());
+//                /**
+//                 * 查询用户信息
+//                 */
+//                queryUserInfo(user.getObjectId());
+//                /**
+//                 * 检查登录是否失效
+//                 */
+//                checkUserSession();
+//                /**
+//                 * 更新用户信息
+//                 */
+//                updateUserInfo();
+//                /**
+//                 * 删除用户
+//                 */
+//                deleteUser();
+
+
+                bind();
+//                unbind();
+
             }
 
 
@@ -348,4 +358,66 @@ public class UserTest {
         });
     }
 
+
+    /**
+     * 登录
+     */
+    private static void login() {
+        BmobUser.loginQQ("", "", "", new ThirdLoginListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println();
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println(ex.getMessage());
+            }
+        });
+    }
+
+    /**
+     * 绑定
+     */
+    private static void bind() {
+        if (!BmobUser.getInstance().isLogin()) {
+            System.err.println("尚未登录");
+            return;
+        }
+        TestUser testUser = BmobUser.getInstance().getCurrentUser(TestUser.class);
+        testUser.bindQQ("", "", "", new ThirdBindListener() {
+            @Override
+            public void onSuccess(String updatedAt) {
+                System.out.println(updatedAt);
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println(ex.getMessage());
+            }
+        });
+    }
+
+
+    /**
+     * 解绑
+     */
+    private static void unbind() {
+        if (!BmobUser.getInstance().isLogin()) {
+            System.err.println("尚未登录");
+            return;
+        }
+        TestUser testUser = BmobUser.getInstance().getCurrentUser(TestUser.class);
+        testUser.unBindQQ(new ThirdUnBindListener() {
+            @Override
+            public void onSuccess(String updatedAt) {
+                System.out.println(updatedAt);
+            }
+
+            @Override
+            public void onFailure(BmobException ex) {
+                System.err.println(ex.getMessage());
+            }
+        });
+    }
 }

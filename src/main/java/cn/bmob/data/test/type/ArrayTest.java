@@ -28,6 +28,9 @@ public class ArrayTest {
     }
 
 
+    /**
+     * 保存数组值
+     */
     private static void saveArray() {
         List<String> strings = new ArrayList<>();
         for (int i = 0; i < 10; i++) {

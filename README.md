@@ -1030,8 +1030,286 @@ private static void deleteFile(String cdnName, String url) {
 }
 ```
 
+# 数组
+
+```
+/**
+ * 保存数组值
+ */
+private static void saveArray() {
+    List<String> strings = new ArrayList<>();
+    for (int i = 0; i < 10; i++) {
+        strings.add("元素" + i);
+    }
+    TestObject testObject = new TestObject();
+    testObject.setArray(strings);
+    testObject.save(new SaveListener() {
+        @Override
+        public void onSuccess(String objectId, String createdAt) {
+            System.out.println(objectId + "-" + createdAt);
 
 
+            //添加值
+            addArray(objectId);
+
+            //删除值
+            removeArray(objectId);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+```
+/**
+ * 从字段的数组中删除值
+ *
+ * @param objectId
+ */
+private static void removeArray(String objectId) {
+    TestObject testObject = new TestObject();
+    testObject.setObjectId(objectId);
+
+
+    //TODO 1、删除字段的数组中的某个值
+    testObject.remove("array", "元素0");
+
+
+    //TODO 2、删除字段的数组中的多个值
+    List<String> allStrings = new ArrayList<>();
+    for (int i = 0; i < 3; i++) {
+        allStrings.add("元素" + i);
+    }
+    testObject.removeAll("array", allStrings);
+
+
+    //TODO 3、删除字段的数组中的所有值
+    testObject.remove("array");
+
+
+    testObject.update(new UpdateListener() {
+        @Override
+        public void onSuccess(String updatedAt) {
+            System.out.println(updatedAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+```
+/**
+ * 往字段的数组中添加值
+ *
+ * @param objectId
+ */
+private static void addArray(String objectId) {
+
+    TestObject testObject = new TestObject();
+    testObject.setObjectId(objectId);
+
+    //TODO 1、往字段的数组中添加一个元素
+    testObject.add("array", "添加一个元素到array字段的列表中");
+
+
+    //TODO 2、往字段的数组中添加多个元素
+    List<String> allStrings = new ArrayList<>();
+    for (int i = 0; i < 3; i++) {
+        allStrings.add("添加多个元素" + i);
+    }
+    testObject.addAll("array", allStrings);
+
+
+    //TODO 3、如果原数组已存在该元素，则不添加
+    testObject.addUnique("array", "元素0");
+
+
+    //TODO 4、如果原数组已存在其中某些元素，则不增加其中已存在的元素
+    List<String> allUniqueStrings = new ArrayList<>();
+    for (int i = 0; i < 3; i++) {
+        allUniqueStrings.add("元素" + i);
+    }
+    testObject.addAllUnique("array", allUniqueStrings);
+
+    testObject.update(new UpdateListener() {
+        @Override
+        public void onSuccess(String updatedAt) {
+            System.out.println(updatedAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+
+```
+
+# 时间
+```
+/**
+ * 保存date类型到表中
+ */
+private static void saveDate() {
+    TestObject testObject = new TestObject();
+    BmobDate bmobDate = new BmobDate(new Date());
+    testObject.setDate(bmobDate);
+    testObject.save(new SaveListener() {
+        @Override
+        public void onSuccess(String objectId, String createdAt) {
+            System.out.println(objectId + "-" + createdAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+
+```
+# 地理位置
+
+```
+/**
+ * 保存地理位置信息到表中
+ */
+private static void saveGeoPoint() {
+    TestObject testObject = new TestObject();
+    BmobGeoPoint bmobGeoPoint = new BmobGeoPoint();
+    bmobGeoPoint.setLatitude(12.35345);
+    bmobGeoPoint.setLongitude(13.23232);
+    testObject.setGeo(bmobGeoPoint);
+    testObject.save(new SaveListener() {
+        @Override
+        public void onSuccess(String objectId, String createdAt) {
+            System.out.println(objectId + "-" + createdAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+
+```
+# 自增/自减
+```
+/**
+ * 保存
+ */
+private static void saveInteger() {
+    TestObject testObject = new TestObject();
+    testObject.setInteger(1);
+    testObject.save(new SaveListener() {
+        @Override
+        public void onSuccess(String objectId, String createdAt) {
+            System.out.println(objectId + "-" + createdAt);
+            /**
+             * 保存之后执行自增修改
+             */
+            increment(objectId);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+
+}
+
+/**
+ * 自增
+ *
+ * @param objectId
+ */
+private static void increment(String objectId) {
+    TestObject testObject = new TestObject();
+    /**
+     * 自增1
+     */
+    testObject.increment("integer");
+    /**
+     * 自增n
+     */
+    testObject.increment("integer", -10);
+    testObject.setObjectId(objectId);
+    testObject.update(new UpdateListener() {
+        @Override
+        public void onSuccess(String updatedAt) {
+            System.out.println(updatedAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+
+# 一对多关联 pointer
+```
+/**
+ * 保存pointer类型
+ */
+private static void addPointer() {
+    //TODO 设置一对多和多对多关系前，需确认该对象不为空，需先登录
+    BmobUser bmobUser = BmobUser.getInstance().getCurrentUser(BmobUser.class);
+    //一对多关系
+    TestObject testObject = new TestObject();
+    testObject.setUser(bmobUser);
+    testObject.save(new SaveListener() {
+        @Override
+        public void onSuccess(String objectId, String createdAt) {
+            System.out.println("save：" + objectId + "-" + createdAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+        }
+    });
+}
+```
+
+# 多对多关联 relation
+
+```
+/**
+ * 添加多对多关系
+ */
+private static void addRelation() {
+    //TODO 设置一对多和多对多关系前，需确认该对象不为空，需先登录
+    BmobUser bmobUser = BmobUser.getInstance().getCurrentUser(BmobUser.class);
+    TestObject testObject = new TestObject();
+    //多对多关系
+    BmobRelation bmobRelation = new BmobRelation();
+    bmobRelation.add(bmobUser);
+    testObject.setRelation(bmobRelation);
+    testObject.save(new SaveListener() {
+        @Override
+        public void onSuccess(String objectId, String createdAt) {
+            System.out.println("save：" + objectId + "-" + createdAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println("ex：" + ex.getCode() + "-" + ex.getMessage());
+        }
+    });
+}
+
+```
 # 同步异步
 
 SDK使用回调的方式返回请求的数据或者错误信息，回调可分为同步回调和异步回调。
@@ -1039,5 +1317,36 @@ SDK使用回调的方式返回请求的数据或者错误信息，回调可分�
 设置回调模式，true为同步，false为异步，默认为异步回调：
 ```
 BmobConfig.setSynchronous(true);
+```
+
+```
+System.out.println("---------------1----------------");
+BmobQuery bmobQuery = new BmobQuery();
+bmobQuery.getObjects(new GetsListener<BmobUser>() {
+    @Override
+    public void onSuccess(List<BmobUser> array) {
+        System.out.println("size "+array.size());
+    }
+
+    @Override
+    public void onFailure(BmobException ex) {
+        System.err.println("ex "+ex.getMessage());
+    }
+});
+System.out.println("---------------2----------------");
+BmobQuery bmobQuery1 = new BmobQuery();
+bmobQuery1.getObjects(new GetsListener<BmobUser>() {
+    @Override
+    public void onSuccess(List<BmobUser> array) {
+        System.out.println("size1 "+array.size());
+    }
+
+    @Override
+    public void onFailure(BmobException ex) {
+        System.err.println("ex1 "+ex.getMessage());
+    }
+});
+System.out.println("---------------3----------------");
+
 ```
 

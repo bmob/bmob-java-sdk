@@ -4,7 +4,6 @@ import cn.bmob.data.Bmob;
 import cn.bmob.data.bean.op.BmobQuery;
 import cn.bmob.data.bean.table.BmobArticle;
 import cn.bmob.data.callback.object.GetsListener;
-import cn.bmob.data.callback.object.SaveListener;
 import cn.bmob.data.exception.BmobException;
 import cn.bmob.data.test.bean.TestConfig;
 
@@ -18,43 +17,24 @@ public class ArticleTest {
 
 
 
-        getArticle();
+        getArticles();
     }
 
-    private static void getArticle() {
-
-
-
-
-        BmobArticle article  =new BmobArticle();
-        article.setContent("test");
-        article.save(new SaveListener() {
-            @Override
-            public void onSuccess(String objectId, String createdAt) {
-
-            }
-
-            @Override
-            public void onFailure(BmobException ex) {
-
-            }
-        });
-
+    /**
+     * 获取图文消息
+     */
+    private static void getArticles() {
         BmobQuery bmobQuery = new BmobQuery();
         bmobQuery.getObjects(new GetsListener<BmobArticle>() {
             @Override
             public void onSuccess(List<BmobArticle> array) {
-
+                System.out.println("size "+array.size());
             }
 
             @Override
             public void onFailure(BmobException ex) {
-
+                System.err.println(ex.getMessage());
             }
         });
-
-
-
-
     }
 }

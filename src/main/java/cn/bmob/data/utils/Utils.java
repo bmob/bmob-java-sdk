@@ -15,9 +15,9 @@ import cn.bmob.data.callback.object.GetsListener;
 import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;
 import cn.bmob.data.callback.user.*;
+import cn.bmob.data.config.BmobConfig;
 import cn.bmob.data.exception.BmobException;
 import com.google.gson.*;
-import com.oracle.javafx.jmx.json.JSONException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -223,10 +223,43 @@ public class Utils {
 
 
     /**
+     * 网络请求回调
+     *
      * @param call
      * @param bmobCallback
      */
     public static void request(Call<JsonObject> call, final BmobCallback bmobCallback) {
+        if (BmobConfig.isSynchronous()) {
+            execute(call, bmobCallback);
+        } else {
+            enqueue(call, bmobCallback);
+        }
+    }
+
+
+    /**
+     * 网络请求回调
+     *
+     * @param synchronous
+     * @param call
+     * @param bmobCallback
+     */
+    public static void request(boolean synchronous, Call<JsonObject> call, final BmobCallback bmobCallback) {
+        if (synchronous) {
+            execute(call, bmobCallback);
+        } else {
+            enqueue(call, bmobCallback);
+        }
+    }
+
+
+    /**
+     * 异步请求，异步回调
+     *
+     * @param call
+     * @param bmobCallback
+     */
+    public static void enqueue(Call<JsonObject> call, final BmobCallback bmobCallback) {
         call.enqueue(new Callback<JsonObject>() {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 try {
@@ -240,6 +273,24 @@ public class Utils {
                 handleThrowable(t, bmobCallback);
             }
         });
+    }
+
+
+    /**
+     * 同步请求，同步回调
+     *
+     * @param call
+     * @param bmobCallback
+     */
+    public static void execute(Call<JsonObject> call, final BmobCallback bmobCallback) {
+        try {
+            Response<JsonObject> response = call.execute();
+            handleResponse(response, bmobCallback);
+            return;
+        } catch (IOException e) {
+            bmobCallback.onFailure(new BmobException(e, 9015));
+            e.printStackTrace();
+        }
     }
 
 
@@ -307,10 +358,9 @@ public class Utils {
      * 处理Pointer类型
      *
      * @param jsonObject
-     * @return JSONObject
-     * @throws JSONException
+     * @return JsonObject
      */
-    public static JsonObject disposePointerType(BmobObject bmobObject, JsonObject jsonObject) throws JSONException {
+    public static JsonObject disposePointerType(BmobObject bmobObject, JsonObject jsonObject) {
         Field[] fields = bmobObject.getClass().getDeclaredFields();
         for (Field f : fields) {
             if (BmobUser.class.isAssignableFrom(f.getType())) {

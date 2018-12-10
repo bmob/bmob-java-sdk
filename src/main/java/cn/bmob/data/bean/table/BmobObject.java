@@ -9,7 +9,6 @@ import cn.bmob.data.exception.BmobException;
 import cn.bmob.data.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.oracle.javafx.jmx.json.JSONException;
 import retrofit2.Call;
 
 import java.io.Serializable;
@@ -126,7 +125,6 @@ public class BmobObject implements Serializable {
 
 
     /**
-     *
      * @return
      */
     public String getTableName() {
@@ -135,7 +133,6 @@ public class BmobObject implements Serializable {
 
 
     /**
-     *
      * @param tableName
      */
     public void setTableName(String tableName) {
@@ -144,7 +141,6 @@ public class BmobObject implements Serializable {
 
 
     /**
-     *
      * @return
      */
     public String getClassName() {
@@ -153,7 +149,6 @@ public class BmobObject implements Serializable {
 
 
     /**
-     *
      * @param className
      */
     public void setClassName(String className) {
@@ -162,7 +157,6 @@ public class BmobObject implements Serializable {
 
 
     /**
-     *
      * @return
      */
     public BmobACL getACL() {
@@ -170,7 +164,6 @@ public class BmobObject implements Serializable {
     }
 
     /**
-     *
      * @param ACL
      */
     public void setACL(BmobACL ACL) {
@@ -197,11 +190,7 @@ public class BmobObject implements Serializable {
      * @param values 要添加的多个值
      */
     public void addAll(String key, Collection<?> values) {
-        try {
-            data.add(key, addFieldOperation("Add", values));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        data.add(key, addFieldOperation("Add", values));
     }
 
     /**
@@ -221,11 +210,7 @@ public class BmobObject implements Serializable {
      * @param values 要添加的多个值
      */
     public void addAllUnique(String key, Collection<?> values) {
-        try {
-            data.add(key, addFieldOperation("AddUnique", values));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        data.add(key, addFieldOperation("AddUnique", values));
     }
 
     /**
@@ -235,11 +220,7 @@ public class BmobObject implements Serializable {
      * @param values 要移除的多个值
      */
     public void removeAll(String key, Collection<?> values) {
-        try {
-            data.add(key, addFieldOperation("Remove", values));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        data.add(key, addFieldOperation("Remove", values));
     }
 
     /**
@@ -256,10 +237,11 @@ public class BmobObject implements Serializable {
 
     /**
      * 删除一个字段
-     * @param key 字段名称
+     *
+     * @param key   字段名称
      * @param value 值
      */
-    public void remove(String key,Object value) {
+    public void remove(String key, Object value) {
         removeAll(key, Arrays.asList(new Object[]{value}));
     }
 
@@ -302,18 +284,14 @@ public class BmobObject implements Serializable {
      */
     public void increment(String key, Number amount) {
         JsonObject increment = new JsonObject();
-        try {
-            increment.addProperty("__op", "Increment");
-            increment.addProperty("amount", amount);
-            data.add(key, increment);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        increment.addProperty("__op", "Increment");
+        increment.addProperty("amount", amount);
+        data.add(key, increment);
     }
 
 
-
     //TODO=======================================================数据操作==============================================
+
     /**
      * 更新一行数据
      *
@@ -322,11 +300,9 @@ public class BmobObject implements Serializable {
     public void update(final UpdateListener updateListener) {
 
 
-
-        Call<JsonObject> call = Bmob.getInstance().api().update(tableName, objectId, Utils.getJsonObjectRequest(this,data));
+        Call<JsonObject> call = Bmob.getInstance().api().update(tableName, objectId, Utils.getJsonObjectRequest(this, data));
         request(call, updateListener);
     }
-
 
 
     /**
@@ -347,7 +323,7 @@ public class BmobObject implements Serializable {
         }
 
 
-        Call<JsonObject> call = Bmob.getInstance().api().insert(tableName, Utils.getJsonObjectRequest(this,data));
+        Call<JsonObject> call = Bmob.getInstance().api().insert(tableName, Utils.getJsonObjectRequest(this, data));
         request(call, saveListener);
     }
 

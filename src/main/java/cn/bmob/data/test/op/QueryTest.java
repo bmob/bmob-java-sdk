@@ -21,15 +21,15 @@ public class QueryTest {
         //TODO Application Entrance
         Bmob.getInstance().init(appId, apiKey);
 
-//        getObject();
-        getObjects();
 
-//        getCount();
     }
 
+
+    /**
+     * 查询结果计数
+     */
     private static void getCount() {
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.setSum("integer");
         bmobQuery.getCount(new CountListener<TestObject>() {
             @Override
             public void onSuccess(Integer count) {
@@ -44,11 +44,12 @@ public class QueryTest {
         });
     }
 
+    /**
+     * 根据查询条件查询多个数据
+     */
     private static void getObjects() {
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.addWhereNotEqualTo("integer", 10);
-        bmobQuery.setKeys("str");
-        bmobQuery.setSum("integer");
+        //TODO 次数增加查询条件
         bmobQuery.getObjects(new GetsListener<TestObject>() {
             @Override
             public void onSuccess(List<TestObject> array) {
@@ -62,10 +63,13 @@ public class QueryTest {
         });
     }
 
-    private static void getObject() {
+    /**
+     * 查询单个数据
+     * @param objectId
+     */
+    private static void getObject(String objectId) {
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.setKeys("str");
-        bmobQuery.getObject("f926a9b287", new GetListener<TestObject>() {
+        bmobQuery.getObject(objectId, new GetListener<TestObject>() {
             @Override
             public void onSuccess(TestObject object) {
                 System.out.println(object.getStr());

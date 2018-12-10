@@ -32,6 +32,13 @@ public class BmobConfig {
     private static boolean debug = true;
 
     /**
+     * 同步或异步
+     */
+    private static boolean synchronous =false;
+
+
+
+    /**
      * 是否需要缓存处理
      */
     private boolean cache;
@@ -80,6 +87,14 @@ public class BmobConfig {
     }
 
 
+    public static String getContentType() {
+        return contentType;
+    }
+
+    public static void setContentType(String contentType) {
+        BmobConfig.contentType = contentType;
+    }
+
     public static boolean isDebug() {
         return debug;
     }
@@ -88,21 +103,30 @@ public class BmobConfig {
         BmobConfig.debug = debug;
     }
 
+    public static boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public static void setSynchronous(boolean synchronous) {
+        BmobConfig.synchronous = synchronous;
+    }
+
     public boolean isCache() {
         return cache;
     }
 
-    public void setCache(boolean cache) {
+    public BmobConfig setCache(boolean cache) {
         this.cache = cache;
+        return this;
     }
-
 
     public String getMethod() {
         return method;
     }
 
-    public void setMethod(String method) {
+    public BmobConfig setMethod(String method) {
         this.method = method;
+        return this;
     }
 
     public static int getConnectionTime() {
@@ -117,56 +141,53 @@ public class BmobConfig {
         return cookieNetWorkTime;
     }
 
-    public void setCookieNetWorkTime(int cookieNetWorkTime) {
+    public BmobConfig setCookieNetWorkTime(int cookieNetWorkTime) {
         this.cookieNetWorkTime = cookieNetWorkTime;
+        return this;
     }
 
     public int getCookieNoNetWorkTime() {
         return cookieNoNetWorkTime;
     }
 
-    public void setCookieNoNetWorkTime(int cookieNoNetWorkTime) {
+    public BmobConfig setCookieNoNetWorkTime(int cookieNoNetWorkTime) {
         this.cookieNoNetWorkTime = cookieNoNetWorkTime;
+        return this;
     }
 
     public int getRetryCount() {
         return retryCount;
     }
 
-    public void setRetryCount(int retryCount) {
+    public BmobConfig setRetryCount(int retryCount) {
         this.retryCount = retryCount;
+        return this;
     }
 
     public long getRetryDelay() {
         return retryDelay;
     }
 
-    public void setRetryDelay(long retryDelay) {
+    public BmobConfig setRetryDelay(long retryDelay) {
         this.retryDelay = retryDelay;
+        return this;
     }
 
     public long getRetryIncreaseDelay() {
         return retryIncreaseDelay;
     }
 
-    public void setRetryIncreaseDelay(long retryIncreaseDelay) {
+    public BmobConfig setRetryIncreaseDelay(long retryIncreaseDelay) {
         this.retryIncreaseDelay = retryIncreaseDelay;
+        return this;
     }
 
     public String getCacheUrl() {
         return cacheUrl;
     }
 
-    public void setCacheUrl(String cacheUrl) {
+    public BmobConfig setCacheUrl(String cacheUrl) {
         this.cacheUrl = cacheUrl;
-    }
-
-
-    public static String getContentType() {
-        return contentType;
-    }
-
-    public static void setContentType(String contentType) {
-        BmobConfig.contentType = contentType;
+        return this;
     }
 }

@@ -50,6 +50,9 @@ public class BmobFile {
     }
 
 
+    public BmobFile() {
+    }
+
     /**
      * @return
      */

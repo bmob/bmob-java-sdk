@@ -12,7 +12,6 @@ import cn.bmob.data.callback.object.GetsListener;
 import cn.bmob.data.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.oracle.javafx.jmx.json.JSONException;
 import retrofit2.Call;
 
 import java.util.*;
@@ -258,13 +257,9 @@ public class BmobQuery {
     public BmobQuery addWhereEqualTo(String key, Object value) {
         if (value instanceof BmobPointer) {
             //where查询条件支持关联关系查询
-            try {
-                JsonObject obj = new JsonObject();
-                Utils.add2Object(obj, "object", value);
-                addCondition(key, null, obj);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            JsonObject obj = new JsonObject();
+            Utils.add2Object(obj, "object", value);
+            addCondition(key, null, obj);
         } else {
             addCondition(key, null, value);
         }
@@ -492,12 +487,8 @@ public class BmobQuery {
      */
     public BmobQuery addWhereRelatedTo(String key, BmobPointer pointer) {
         JsonObject obj = new JsonObject();
-        try {
-            obj.addProperty("key", key);
-            Utils.add2Object(obj, "object", pointer);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        obj.addProperty("key", key);
+        Utils.add2Object(obj, "object", pointer);
         addCondition("$relatedTo", null, obj);
         return this;
     }

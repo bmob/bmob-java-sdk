@@ -249,6 +249,8 @@ private static void delete(String objectId) {
 
 # 用户表
 
+_User
+
 |属性|说明|
 |----|----|
 |username|用户名，可以是邮箱、手机号码、第三方平台的用户唯一标志|
@@ -684,9 +686,155 @@ private static void unbind() {
 ```
 # 角色表
 
+_Role
+
+|属性|说明|
+|----|----|
+|name|角色名称|
+|roles|角色的子角色|
+|title|角色包含的用户|
+|users|图文消息注释|
+
+
+
+
+```
+/**
+ * 查询角色
+ * @param name
+ */
+private static void queryRole(final String name) {
+    BmobQuery bmobQuery = new BmobQuery();
+    bmobQuery.addWhereEqualTo("name", name);
+    bmobQuery.getObjects(new GetsListener<BmobRole>() {
+        @Override
+        public void onSuccess(List<BmobRole> array) {
+            if (array.size() < 1) {
+                saveRole(name);
+            } else {
+                updateAddRole(array.get(0).getObjectId());
+                updateRemoveRole(array.get(0).getObjectId());
+            }
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+```
+/**
+ * 
+ * 保存角色
+ * @param name
+ */
+private static void saveRole(String name) {
+    BmobRole bmobRole = new BmobRole();
+    //TODO Role names must be restricted to alphanumeric characters, dashes(-), underscores(_), and spaces.
+    bmobRole.setName(name);
+    BmobUser bmobUser = BmobUser.getInstance().getCurrentUser(BmobUser.class);
+    bmobRole.getUsers().add(bmobUser);
+    bmobRole.save(new SaveListener() {
+        @Override
+        public void onSuccess(String objectId, String createdAt) {
+            System.out.println(objectId + "-" + createdAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+```
+/**
+ * 添加角色中的用户
+ * @param objectId
+ */
+private static void updateAddRole(String objectId) {
+    BmobRole bmobRole = new BmobRole();
+    //TODO Role names must be restricted to alphanumeric characters, dashes(-), underscores(_), and spaces.
+    BmobUser bmobUser = BmobUser.getInstance().getCurrentUser(BmobUser.class);
+    bmobRole.getUsers().add(bmobUser);
+    bmobRole.setObjectId(objectId);
+    bmobRole.update(new UpdateListener() {
+        @Override
+        public void onSuccess(String updatedAt) {
+            System.out.println(updatedAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+```
+/**
+ * 删除角色中的用户
+ * @param objectId
+ */
+private static void updateRemoveRole(String objectId) {
+    BmobRole bmobRole = new BmobRole();
+    //TODO Role names must be restricted to alphanumeric characters, dashes(-), underscores(_), and spaces.
+    BmobUser bmobUser = BmobUser.getInstance().getCurrentUser(BmobUser.class);
+    bmobRole.getUsers().remove(bmobUser);
+    bmobRole.setObjectId(objectId);
+    bmobRole.update(new UpdateListener() {
+        @Override
+        public void onSuccess(String updatedAt) {
+            System.out.println(updatedAt);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+
+
+
+
 # 图文表
 
+_Article
 
+创建图文消息只能在控制台创建。
+
+|属性|说明|
+|----|----|
+|url|控制台生成的图文消息的地址|
+|type|图文消息类型|
+|title|图文消息的标题|
+|desc|图文消息注释|
+|content|图文消息内容|
+
+获取图文消息：
+```
+/**
+ * 获取图文消息
+ */
+private static void getArticles() {
+    BmobQuery bmobQuery = new BmobQuery();
+    bmobQuery.getObjects(new GetsListener<BmobArticle>() {
+        @Override
+        public void onSuccess(List<BmobArticle> array) {
+            System.out.println("size "+array.size());
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
 
 # 短信验证
 
@@ -740,4 +888,156 @@ private static void verifySmsCode(String phoneNumber,String smsCode) {
 
 
 
+
+
+
+# 数据查询
+
+查询单个数据：
+
+```
+/**
+ * 查询单个数据
+ * @param objectId
+ */
+private static void getObject(String objectId) {
+    BmobQuery bmobQuery = new BmobQuery();
+    bmobQuery.getObject(objectId, new GetListener<TestObject>() {
+        @Override
+        public void onSuccess(TestObject object) {
+            System.out.println(object.getStr());
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+
+```
+
+查询多个数据：
+
+```
+/**
+ * 根据查询条件查询多个数据
+ */
+private static void getObjects() {
+    BmobQuery bmobQuery = new BmobQuery();
+    //TODO 次数增加查询条件
+    bmobQuery.getObjects(new GetsListener<TestObject>() {
+        @Override
+        public void onSuccess(List<TestObject> array) {
+            System.out.println("size "+array.size());
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+
+```
+
+查询结果计数：
+```
+/**
+ * 查询结果计数
+ */
+private static void getCount() {
+    BmobQuery bmobQuery = new BmobQuery();
+    bmobQuery.getCount(new CountListener<TestObject>() {
+        @Override
+        public void onSuccess(Integer count) {
+            System.out.println("count "+count);
+        }
+
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+
+## 查询条件
+
+比较查询：
+
+|方法|功能|
+|-----|-----|
+|addWhereEqualTo|等于|
+|addWhereNotEqualTo|不等于|
+|addWhereLessThan|小于|
+|addWhereLessThanOrEqualTo|小于等于|
+|addWhereGreaterThan|大于|
+|addWhereGreaterThanOrEqualTo|大于等于|
+
+
+
+
+
+# 文件管理
+
+上传文件：
+```
+/**
+ * 上传文件
+ */
+private static void uploadFile() {
+    File file = new File("/Users/zhangchaozhou/Desktop/F7C519D27247E8CE4EC6310472F5E47D.png");
+    final BmobFile bmobFile = new BmobFile(file);
+    bmobFile.uploadFile(new UploadListener() {
+        @Override
+        public void onSuccess() {
+            System.out.println("success");
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+
+删除文件：
+```
+/**
+ * 删除文件
+ *
+ * @param cdnName
+ * @param url
+ */
+private static void deleteFile(String cdnName, String url) {
+    BmobFile bmobFile = new BmobFile();
+    bmobFile.setCdnName(cdnName);
+    bmobFile.setUrl(url);
+    bmobFile.deleteFile(new DeleteFileListener() {
+        @Override
+        public void onSuccess(String msg) {
+            System.out.println(msg);
+        }
+
+        @Override
+        public void onFailure(BmobException ex) {
+            System.err.println(ex.getMessage());
+        }
+    });
+}
+```
+
+
+
+# 同步异步
+
+SDK使用回调的方式返回请求的数据或者错误信息，回调可分为同步回调和异步回调。
+
+设置回调模式，true为同步，false为异步，默认为异步回调：
+```
+BmobConfig.setSynchronous(true);
+```
 

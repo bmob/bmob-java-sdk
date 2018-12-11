@@ -5,9 +5,9 @@ Bmob Java Rest API SDK
 Bmob Java SDK
 ```
 <dependency>
-    <groupId>com.github.bmob</groupId>
-    <artifactId>javasdk</artifactId>
-    <version>1.0-SNAPSHOT</version>
+  <groupId>com.github.bmob</groupId>
+  <artifactId>javasdk</artifactId>
+  <version>1.0.1-rc1</version>
 </dependency>
 ```
 其他框架

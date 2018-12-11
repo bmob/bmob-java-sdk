@@ -1,6 +1,47 @@
 # bmob-java-sdk
 Bmob Java Rest API SDK
-
+# 集成
+## Maven集成
+Bmob Java SDK
+```
+<dependency>
+    <groupId>com.github.bmob</groupId>
+    <artifactId>javasdk</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+其他框架
+```
+<dependency>
+    <groupId>com.squareup.retrofit2</groupId>
+    <artifactId>retrofit</artifactId>
+    <version>2.5.0</version>
+</dependency>
+<dependency>
+    <groupId>com.squareup.retrofit2</groupId>
+    <artifactId>converter-gson</artifactId>
+    <version>2.5.0</version>
+</dependency>
+<dependency>
+    <groupId>com.squareup.retrofit2</groupId>
+    <artifactId>adapter-rxjava</artifactId>
+    <version>2.5.0</version>
+</dependency>
+<dependency>
+    <groupId>com.squareup.okhttp3</groupId>
+    <artifactId>logging-interceptor</artifactId>
+    <version>3.12.0</version>
+</dependency>
+```
+# 开源地址
+源码地址
+```
+https://github.com/bmob/bmob-java-sdk/tree/v3/javasdk
+```
+Demo地址
+```
+https://github.com/bmob/bmob-java-sdk/tree/v3/javasdkdemo
+```
 # 基本数据类型
 
 BmobObject

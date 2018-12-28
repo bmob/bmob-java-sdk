@@ -33,10 +33,10 @@ public class UserTest {
         /**
          * 获取多个用户信息
          */
-//        getUsers();
+        getUsers();
 
 
-        login("1544174390195", "1544174390195");
+//        login("1544174390195", "1544174390195");
 
 
     }
@@ -261,6 +261,9 @@ public class UserTest {
             @Override
             public void onSuccess(List<BmobUser> array) {
                 System.out.println("get users " + array.size());
+
+                BmobUser bmobUser = array.get(0);
+                System.out.println(bmobUser.getUsername());
             }
 
             @Override

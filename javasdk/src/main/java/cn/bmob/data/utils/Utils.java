@@ -12,12 +12,14 @@ import cn.bmob.data.callback.base.BmobSaveCallback;
 import cn.bmob.data.callback.file.UploadFileListener;
 import cn.bmob.data.callback.object.CountListener;
 import cn.bmob.data.callback.object.GetsListener;
+import cn.bmob.data.callback.object.GetsStringListener;
 import cn.bmob.data.callback.object.UpdateListener;
 import cn.bmob.data.callback.sms.SendSmsCodeListener;
 import cn.bmob.data.callback.user.*;
 import cn.bmob.data.config.BmobConfig;
 import cn.bmob.data.exception.BmobException;
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,10 +27,7 @@ import retrofit2.Response;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -143,9 +142,9 @@ public class Utils {
     /**
      * 获取对象
      *
-     * @param json json
+     * @param json  json
      * @param clazz 类
-     * @param <T> 泛型
+     * @param <T>   泛型
      * @return 对象
      */
     public static <T> T getObjectFromJson(String json, Class<T> clazz) {
@@ -202,8 +201,9 @@ public class Utils {
                 ((UpdateListener) bmobCallback).onSuccess(bmobResponse.getUpdatedAt());
             } else if (bmobCallback instanceof SendSmsCodeListener) {
                 ((SendSmsCodeListener) bmobCallback).onSuccess(bmobResponse.getSmsId());
-            } else if (bmobCallback instanceof GetsListener) {
-                ((GetsListener) bmobCallback).onSuccess(bmobResponse.getResults());
+            } else if (bmobCallback instanceof GetsStringListener) {
+                String json = Utils.getJsonFromResponse(response);
+                ((GetsStringListener) bmobCallback).onSuccess(json);
             } else if (bmobCallback instanceof CountListener) {
                 ((CountListener) bmobCallback).onSuccess(bmobResponse.getCount());
             } else if (bmobCallback instanceof UploadFileListener) {

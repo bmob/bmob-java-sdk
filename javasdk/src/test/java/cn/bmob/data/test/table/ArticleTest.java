@@ -29,6 +29,8 @@ public class ArticleTest {
             @Override
             public void onSuccess(List<BmobArticle> array) {
                 System.out.println("size "+array.size());
+                BmobArticle bmobArticle = array.get(0);
+                System.out.println(bmobArticle.getObjectId());
             }
 
             @Override

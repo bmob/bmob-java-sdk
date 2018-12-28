@@ -1,6 +1,7 @@
 package cn.bmob.data.bean.op;
 
 import cn.bmob.data.Bmob;
+import cn.bmob.data.bean.resp.BmobResponse;
 import cn.bmob.data.bean.table.BmobObject;
 import cn.bmob.data.bean.table.BmobUser;
 import cn.bmob.data.bean.type.BmobDate;
@@ -9,11 +10,17 @@ import cn.bmob.data.bean.type.BmobPointer;
 import cn.bmob.data.callback.object.CountListener;
 import cn.bmob.data.callback.object.GetListener;
 import cn.bmob.data.callback.object.GetsListener;
+import cn.bmob.data.callback.object.GetsStringListener;
+import cn.bmob.data.exception.BmobException;
+import cn.bmob.data.utils.GsonUtil;
 import cn.bmob.data.utils.Utils;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import retrofit2.Call;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -196,7 +203,6 @@ public class BmobQuery {
     }
 
     /**
-     *
      * @param key   字段名称
      * @param value 条件值
      * @return 返回当前BmobQuery对象
@@ -208,7 +214,6 @@ public class BmobQuery {
     }
 
     /**
-     *
      * @param key   字段名称
      * @param value 条件值
      * @return 返回当前BmobQuery对象
@@ -220,7 +225,6 @@ public class BmobQuery {
     }
 
     /**
-     *
      * @param key   字段名称
      * @param value 条件值
      * @return 返回当前BmobQuery对象
@@ -232,7 +236,6 @@ public class BmobQuery {
     }
 
     /**
-     *
      * @param key   字段名称
      * @param value 条件值
      * @return 返回当前BmobQuery对象
@@ -244,7 +247,6 @@ public class BmobQuery {
     }
 
     /**
-     *
      * @param key   字段名称
      * @param value 条件值
      * @return 返回当前BmobQuery对象
@@ -262,7 +264,6 @@ public class BmobQuery {
     }
 
     /**
-     *
      * @param key   字段名称
      * @param value 条件值
      * @return 返回当前BmobQuery对象
@@ -534,7 +535,6 @@ public class BmobQuery {
      * 限制查询的结果数量
      *
      * @param newLimit 结果数量
-     *
      * @return 返回当前BmobQuery对象
      */
     public BmobQuery setLimit(int newLimit) {
@@ -569,7 +569,6 @@ public class BmobQuery {
      * 关联查询，该方法用在字段为Pointer类型时（例："post"）
      *
      * @param fieldName 列名
-     *
      * @return 返回当前BmobQuery对象
      */
     public BmobQuery include(String fieldName) {
@@ -700,9 +699,9 @@ public class BmobQuery {
     /**
      * 获取一条数据
      *
-     * @param objectId 唯一标志
+     * @param objectId    唯一标志
      * @param getListener 获取监听
-     * @param <T> 泛型
+     * @param <T>         泛型
      */
     public <T> void getObject(String objectId, final GetListener<T> getListener) {
         Map<String, Object> map = buildMap();
@@ -716,20 +715,48 @@ public class BmobQuery {
      * 获取多条数据
      *
      * @param getsListener 获取监听
-     * @param <T> 泛型
+     * @param <T>          泛型
      */
-    public <T> void getObjects(GetsListener<T> getsListener) {
+    public <T> void getObjects(final GetsListener<T> getsListener) {
         Map<String, Object> map = buildMap();
         Class clazz = Utils.getClassFromBmobCallback(getsListener);
         String tableName = getTableNameFromClass(clazz);
         Call<JsonObject> call = Bmob.getInstance().api().getObjects(tableName, map);
-        request(call, getsListener);
+        request(call, new GetsStringListener() {
+            @Override
+            public void onFailure(BmobException ex) {
+                getsListener.onFailure(ex);
+            }
+
+            @Override
+            public void onSuccess(String array) {
+                JsonObject jsonObject = new JsonParser().parse(array).getAsJsonObject();
+                JsonArray jsonArray = (JsonArray) jsonObject.get("results");
+                Gson gson = new Gson();
+
+                List<T> list = new ArrayList<>();
+
+
+                for (JsonElement jsonElement : jsonArray) {
+                    list.add(gson.fromJson(jsonElement, Utils.<T>getClassFromBmobCallback(getsListener)));
+                }
+
+
+
+
+                getsListener.onSuccess(list);
+            }
+        });
+
+
     }
+
+
 
 
     /**
      * @param countListener 计数监听
-     * @param <T> 泛型
+     * @param <T>           泛型
      */
     public <T> void getCount(CountListener<T> countListener) {
         setCount(1);

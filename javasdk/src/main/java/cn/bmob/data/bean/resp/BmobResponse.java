@@ -155,7 +155,6 @@ public class BmobResponse<T> {
         this.smsId = smsId;
     }
 
-
     public List<T> getResults() {
         return results;
     }
@@ -163,7 +162,6 @@ public class BmobResponse<T> {
     public void setResults(List<T> results) {
         this.results = results;
     }
-
 
     public String getCdn() {
         return cdn;
@@ -197,4 +195,7 @@ public class BmobResponse<T> {
     public void setFail(String fail) {
         this.fail = fail;
     }
+
+
+
 }

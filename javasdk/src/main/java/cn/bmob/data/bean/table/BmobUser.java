@@ -210,6 +210,13 @@ public class BmobUser extends BmobObject {
      * @param updateListener 更新监听
      */
     public void updateUserInfo(UpdateListener updateListener) {
+        /**
+         * {
+         *     "code": 202,
+         *     "error": "username '' already taken."
+         * }
+         */
+        data.remove("username");
         Call<JsonObject> call = Bmob.getInstance().api().updateUserInfo(getObjectId(), Utils.getJsonObjectRequest(this, data));
         request(call, updateListener);
     }

@@ -25,6 +25,9 @@ public class BmobInterceptor {
                 Request.Builder builder = chain.request().newBuilder();
                 builder.addHeader("X-Bmob-Application-Id", Bmob.getInstance().getAppId());
                 builder.addHeader("X-Bmob-REST-API-Key", Bmob.getInstance().getApiKey());
+                if (Bmob.getInstance().getMasterKey()!=null){
+                    builder.addHeader("X-Bmob-Master-Key", Bmob.getInstance().getMasterKey());
+                }
                 builder.addHeader("Content-Type", BmobConfig.getContentType());
                 String session = BmobUser.getInstance().getSessionToken();
                 if (!Utils.isStringEmpty(session)) {

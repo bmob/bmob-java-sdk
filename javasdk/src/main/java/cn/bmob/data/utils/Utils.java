@@ -111,16 +111,27 @@ public class Utils {
      */
     public static String getTableNameFromClass(Class clazz) {
         String tableName;
-        if (clazz.getSimpleName().equals(BmobUser.class.getSimpleName())) {
+
+        String s = clazz.getGenericSuperclass().getTypeName();
+        if (s.equals(BmobUser.class.getTypeName())) {
             tableName = "_User";
-        } else if (clazz.getSimpleName().equals(BmobRole.class.getSimpleName())) {
+        } else if (s.equals(BmobRole.class.getTypeName())) {
             tableName = "_Role";
-        } else if (clazz.getSimpleName().equals(BmobArticle.class.getSimpleName())) {
-            tableName = "_Role";
+        } else if (s.equals(BmobArticle.class.getTypeName())) {
+            tableName = "_Article";
         } else {
             tableName = clazz.getSimpleName();
         }
+
+
+
+        System.out.println(s);
+
         return tableName;
+
+
+
+
     }
 
     /**

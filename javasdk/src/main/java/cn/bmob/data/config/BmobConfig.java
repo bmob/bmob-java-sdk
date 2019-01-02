@@ -21,6 +21,12 @@ public class BmobConfig {
      */
     public static final String KEY_REST_API_KEY = "X-Bmob-REST-API-Key";
 
+
+    /**
+     * KEY_MASTER_KEY
+     */
+    public static final String KEY_MASTER_KEY = "X-Bmob-Master-Key";
+
     /**
      * 请求的内容类型
      */

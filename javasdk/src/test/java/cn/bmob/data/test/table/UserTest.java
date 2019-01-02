@@ -20,7 +20,7 @@ public class UserTest {
 
     public static void main(String[] args) {
         //TODO Application Entrance
-        Bmob.getInstance().init(TestConfig.appId, TestConfig.apiKey);
+        Bmob.getInstance().init(TestConfig.appId, TestConfig.apiKey,TestConfig.masterKey);
         /**
          * 用户名密码注册
          */
@@ -107,9 +107,10 @@ public class UserTest {
 //                deleteUser();
 
 
-                bind();
+//                bind();
 //                unbind();
 
+                deleteUser();
             }
 
 
@@ -257,13 +258,27 @@ public class UserTest {
      */
     private static void getUsers() {
         BmobQuery bmobQuery = new BmobQuery();
-        bmobQuery.getObjects(new GetsListener<BmobUser>() {
+        bmobQuery.getObjects(new GetsListener<TestUser>() {
             @Override
-            public void onSuccess(List<BmobUser> array) {
+            public void onSuccess(List<TestUser> array) {
                 System.out.println("get users " + array.size());
 
-                BmobUser bmobUser = array.get(0);
-                System.out.println(bmobUser.getUsername());
+                TestUser testUser = array.get(0);
+                System.out.println(testUser.getUsername());
+                testUser.setNickname("修改用户昵称");
+                testUser.setGender(2);
+                testUser.setAge(30);
+                testUser.update(new UpdateListener() {
+                    @Override
+                    public void onSuccess(String updatedAt) {
+                        System.out.println(updatedAt);
+                    }
+
+                    @Override
+                    public void onFailure(BmobException ex) {
+                        System.err.println(ex.getMessage());
+                    }
+                });
             }
 
             @Override

@@ -23,7 +23,10 @@ public class Bmob {
     private String apiKey;
 
 
-
+    /**
+     * MASTER KEY
+     */
+    private String masterKey;
 
 
     /**
@@ -52,6 +55,23 @@ public class Bmob {
      */
     private void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+
+    /**
+     * @return master key
+     */
+    public String getMasterKey() {
+        return masterKey;
+    }
+
+    /**
+     * @param masterKey
+     * @return
+     */
+    public Bmob setMasterKey(String masterKey) {
+        this.masterKey = masterKey;
+        return this;
     }
 
     /**
@@ -88,7 +108,6 @@ public class Bmob {
 
 
     /**
-     *
      * @return 单例
      */
     public static Bmob getInstance() {
@@ -103,7 +122,6 @@ public class Bmob {
     }
 
     /**
-     *
      * @return API
      */
     public BmobApiService api() {
@@ -114,11 +132,17 @@ public class Bmob {
     /**
      * 初始化应用
      *
-     * @param appId appId
+     * @param appId  appId
      * @param apiKey apiKey
      */
     public void init(String appId, String apiKey) {
         setAppId(appId);
         setApiKey(apiKey);
+    }
+
+
+    public void init(String appId, String apiKey, String masterKey) {
+        init(appId,apiKey);
+        setMasterKey(masterKey);
     }
 }

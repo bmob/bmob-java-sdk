@@ -7,7 +7,7 @@ Bmob Java SDK
 <dependency>
   <groupId>com.github.bmob</groupId>
   <artifactId>javasdk</artifactId>
-  <version>1.0.1-rc1</version>
+  <version>1.0.1-rc2</version>
 </dependency>
 ```
 其他框架
